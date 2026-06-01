@@ -214,11 +214,23 @@
       <p class="text-gray-500 mt-2">Metas Mensais</p>
     </div>
 
-    <select id="filtroMetaAno" onchange="gerarPainelMetas()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white">
-      <option value="2024">2024</option>
-      <option value="2025">2025</option>
-      <option value="2026">2026</option>
-    </select>
+    <div class="flex gap-3 flex-wrap items-end justify-end">
+      <div class="filter-field">
+        <label for="filtroMetaAno">Ano</label>
+        <select id="filtroMetaAno" onchange="gerarPainelMetas()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white">
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="metaMensalEditavelInput">Meta mensal individual</label>
+        <input id="metaMensalEditavelInput" type="text" inputmode="decimal" class="border border-green-300 rounded-xl px-4 py-3 bg-white font-semibold text-green-700 w-56" placeholder="R$ 0,00" onblur="formatarCampoMoeda(this)">
+      </div>
+      <button onclick="salvarMetaMensalAno()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold shadow">
+        Salvar Meta
+      </button>
+    </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -484,7 +496,7 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-2">Mapeamento das Colunas</h2>
     <p class="text-gray-500 mb-6">Informe apenas a letra da coluna onde está cada informação na base do vendedor.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
       <div class="filter-field">
         <label>Coluna Integrador / Cliente</label>
         <input id="configColCliente" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="A">
@@ -500,10 +512,6 @@
         <input id="configColValor" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="I">
       </div>
 
-      <div class="filter-field">
-        <label>Coluna Pedido</label>
-        <input id="configColPedido" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="D">
-      </div>
     </div>
 
     <div class="flex gap-3 flex-wrap">
@@ -541,8 +549,7 @@ const CONFIG_PADRAO = {
   gid:"555097355",
   colunaCliente:"A",
   colunaData:"B",
-  colunaValor:"I",
-  colunaPedido:"D"
+  colunaValor:"I"
 };
 
 let configCRM = carregarConfigCRM();
@@ -551,11 +558,61 @@ function getUrlLiberacoes(){
   return `https://docs.google.com/spreadsheets/d/${configCRM.sheetId}/gviz/tq?tqx=out:json&gid=${configCRM.gid}`;
 }
 
-const metasMensais = {
+const METAS_MENSAIS_PADRAO = {
   2024:1000000,
   2025:1800000,
   2026:2000000
 };
+
+let metasMensais = carregarMetasMensais();
+
+function carregarMetasMensais(){
+  try{
+    const salvo = JSON.parse(localStorage.getItem("jng_crm_metas_mensais") || "{}");
+    return {...METAS_MENSAIS_PADRAO,...salvo};
+  }catch(e){
+    return {...METAS_MENSAIS_PADRAO};
+  }
+}
+
+function getMetaMensalAno(ano){
+  return parseFloat(metasMensais[String(ano)] || metasMensais[ano] || 0);
+}
+
+function salvarMetaMensalAno(){
+  const anoSelecionado = document.getElementById("filtroMetaAno").value;
+  const campo = document.getElementById("metaMensalEditavelInput");
+  const valor = parseMoedaBR(campo?.value || 0);
+
+  metasMensais[String(anoSelecionado)] = valor;
+  localStorage.setItem("jng_crm_metas_mensais", JSON.stringify(metasMensais));
+
+  if(campo){
+    campo.value = valor > 0 ? dinheiro(valor) : "";
+  }
+
+  const anoPerf = document.getElementById("filtroAnoPerformance")?.value;
+  if(String(anoPerf) === String(anoSelecionado)){
+    const campoPerf = document.getElementById("metaMensalPerformanceInput");
+    if(campoPerf){
+      campoPerf.value = valor > 0 ? dinheiro(valor) : "";
+    }
+  }
+
+  gerarPainelMetas();
+  gerarPerformance();
+  alert("Meta mensal salva para este ano.");
+}
+
+function sincronizarMetaPerformanceComAno(){
+  const ano = document.getElementById("filtroAnoPerformance")?.value || new Date().getFullYear();
+  const campoPerf = document.getElementById("metaMensalPerformanceInput");
+  const valor = getMetaMensalAno(ano);
+  if(campoPerf){
+    campoPerf.value = valor > 0 ? dinheiro(valor) : "";
+  }
+  return valor;
+}
 
 let dadosOriginais = [];
 let rankingGlobal = [];
@@ -636,7 +693,6 @@ function preencherTelaConfig(){
   document.getElementById("configColCliente").value = configCRM.colunaCliente || "A";
   document.getElementById("configColData").value = configCRM.colunaData || "B";
   document.getElementById("configColValor").value = configCRM.colunaValor || "I";
-  document.getElementById("configColPedido").value = configCRM.colunaPedido || "D";
 }
 
 function salvarConfigCRM(){
@@ -655,8 +711,7 @@ function salvarConfigCRM(){
     gid:document.getElementById("configGid").value.trim(),
     colunaCliente:document.getElementById("configColCliente").value.trim().toUpperCase() || "A",
     colunaData:document.getElementById("configColData").value.trim().toUpperCase() || "B",
-    colunaValor:document.getElementById("configColValor").value.trim().toUpperCase() || "I",
-    colunaPedido:document.getElementById("configColPedido").value.trim().toUpperCase() || "D"
+    colunaValor:document.getElementById("configColValor").value.trim().toUpperCase() || "I"
   };
 
   localStorage.setItem("jng_crm_config", JSON.stringify(configCRM));
@@ -834,6 +889,7 @@ function popularPeriodoPerformance(){
 }
 
 function atualizarPeriodoPerformance(){
+  sincronizarMetaPerformanceComAno();
   popularSemanasPerformance(true);
   popularDiasPerformance(true);
   gerarPerformance(false);
@@ -1321,7 +1377,11 @@ function gerarClientesPerdidos(){
 
 function gerarPainelMetas(){
   const anoSelecionado = document.getElementById("filtroMetaAno").value;
-  const metaMensal = metasMensais[anoSelecionado];
+  const metaMensal = getMetaMensalAno(anoSelecionado);
+  const campoMetaEditavel = document.getElementById("metaMensalEditavelInput");
+  if(campoMetaEditavel){
+    campoMetaEditavel.value = metaMensal > 0 ? dinheiro(metaMensal) : "";
+  }
 
   const meses = [
     "Jan","Fev","Mar","Abr","Mai","Jun",
@@ -1396,27 +1456,30 @@ function gerarPainelMetas(){
 }
 
 function salvarMetasPerformance(){
+  const {ano} = obterPeriodoPerformance();
   const campoMetaMensal = document.getElementById("metaMensalPerformanceInput");
   const metaMensal = parseMoedaBR(campoMetaMensal?.value || 0);
 
-  localStorage.setItem("jng_meta_mensal_performance", metaMensal);
+  metasMensais[String(ano)] = metaMensal;
+  localStorage.setItem("jng_crm_metas_mensais", JSON.stringify(metasMensais));
 
   if(campoMetaMensal){
     campoMetaMensal.value = metaMensal > 0 ? dinheiro(metaMensal) : "";
   }
 
-  gerarPerformance();
+  if(document.getElementById("filtroMetaAno")?.value == ano){
+    const campoMetaEditavel = document.getElementById("metaMensalEditavelInput");
+    if(campoMetaEditavel){
+      campoMetaEditavel.value = metaMensal > 0 ? dinheiro(metaMensal) : "";
+    }
+  }
+
+  gerarPainelMetas();
+  gerarPerformance(false);
 }
 
 function carregarMetaMensalPerformance(){
-  const metaMensal = parseFloat(localStorage.getItem("jng_meta_mensal_performance") || 0);
-  const campoMetaMensal = document.getElementById("metaMensalPerformanceInput");
-
-  if(campoMetaMensal){
-    campoMetaMensal.value = metaMensal > 0 ? dinheiro(metaMensal) : "";
-  }
-
-  return metaMensal;
+  return sincronizarMetaPerformanceComAno();
 }
 
 function atualizarCamposMetasCalculadas(metaDiaria, metaSemanal){
@@ -1529,8 +1592,10 @@ function gerarPerformance(atualizarListas=true){
   const mediaDiariaUtil = diasUteisCorridos > 0 ? fatMesAtual / diasUteisCorridos : 0;
   const projecaoMes = ehMesAtual ? (mediaDiariaUtil * diasUteisMes.length) : fatMesAtual;
 
-  const metaMensalAtual = metaMensalInformada > 0 ? metaMensalInformada : (metasMensais[ano] || 0);
+  const metaMensalAtual = metaMensalInformada > 0 ? metaMensalInformada : getMetaMensalAno(ano);
   const diasUteisSemanaSelecionada = contarDiasUteis(iniSemana, fimSem);
+  // Cálculo revisado: a meta diária é sempre a meta mensal dividida pelos dias úteis do mês filtrado.
+  // A meta semanal é essa meta diária multiplicada apenas pelos dias úteis da semana selecionada.
   const metaDiaria = diasUteisMes.length > 0 ? metaMensalAtual / diasUteisMes.length : 0;
   const metaSemanal = metaDiaria * diasUteisSemanaSelecionada;
 
