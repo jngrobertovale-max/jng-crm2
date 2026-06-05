@@ -30,6 +30,17 @@
     .alert-success{border-left-color:#22c55e;background:#f0fdf4;}
     .alert-info{border-left-color:#3b82f6;background:#eff6ff;}
     .action-card{border:1px solid #e5e7eb;border-radius:18px;padding:18px;background:#ffffff;}
+
+    .version-badge{background:#111827;color:white;border-radius:16px;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:12px;line-height:1.35;border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:.2s;text-align:left;min-width:150px;}
+    .version-badge:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(0,0,0,.28);}
+    .version-badge strong{display:block;font-size:13px;color:#ffffff;}
+    .version-badge span{color:#cbd5e1;}
+    .version-modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
+    .version-modal.open{display:flex;}
+    .version-box{background:white;border-radius:24px;max-width:560px;width:100%;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.30);}
+    .version-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eef2f7;color:#374151;}
+    .version-item:last-child{border-bottom:none;}
+    .version-dot{width:22px;height:22px;border-radius:999px;background:#ede9fe;color:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex:none;}
     @media print{.sidebar,.filter-panel button,#btnExportarPdfPerf{display:none!important}.content{margin-left:0}.card{box-shadow:none;border:1px solid #e5e7eb}}
   </style>
 </head>
@@ -40,8 +51,39 @@
   <button onclick="abrirDashboard()" class="bg-blue-600">CRM</button>
   <button onclick="abrirMetas()" class="bg-green-600">META</button>
   <button onclick="abrirPerformance()" class="bg-purple-600">PERF.</button>
+  <button onclick="abrirRisco()" class="bg-red-600">RISCO</button>
   <button onclick="abrirConfig()" class="bg-gray-600">CONFIG</button>
 </div>
+
+<div id="modalVersao" class="version-modal">
+  <div class="version-box">
+    <div class="flex justify-between items-start gap-4 mb-5">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Novidades da versão</h2>
+        <p class="text-gray-500 mt-1">JNG CRM • v1.6.1 • Build 2026.06.05</p>
+      </div>
+      <button onclick="fecharModalVersao()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold">X</button>
+    </div>
+
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Controle de versão visível</strong><br><span class="text-sm text-gray-500">Agora o CRM mostra a versão no topo direito, no lugar do botão de atualização automática.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Modal de novidades</strong><br><span class="text-sm text-gray-500">Ao clicar na versão, você vê as principais alterações da atualização.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Metas individuais por vendedor</strong><br><span class="text-sm text-gray-500">Cada usuário pode definir sua própria meta no navegador.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Configuração simplificada</strong><br><span class="text-sm text-gray-500">A configuração não exige mais coluna de Pedido.</span></div>
+    </div>
+  </div>
+</div>
+
 
 <div class="content p-8">
 
@@ -51,9 +93,10 @@
       <h1 class="text-4xl font-bold text-gray-800">JNG CRM</h1>
       <p class="text-gray-500 mt-2">Dashboard Comercial • Liberações</p>
     </div>
-    <div class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg">
-      Atualização Automática
-    </div>
+    <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
+      <strong>📋 Versão 1.6.1</strong>
+      <span>Build 2026.06.05</span>
+    </button>
   </div>
 
   <div class="flex gap-4 mb-8 flex-wrap">
@@ -165,6 +208,7 @@
     </div>
   </div>
 
+
   <div class="card">
     <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
       <h2 class="text-2xl font-bold text-gray-700">Ranking Integradores</h2>
@@ -185,6 +229,70 @@
       </table>
     </div>
   </div>
+</div>
+
+<div id="painelRisco" class="hidden">
+  <div class="flex justify-between items-center mb-10 flex-wrap gap-4">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Clientes em Risco</h1>
+      <p class="text-gray-500 mt-2">Acompanhamento de clientes com histórico relevante sem compra recente</p>
+    </div>
+  </div>
+
+  <div class="card mb-10">
+    <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-700">🚨 Clientes em Risco</h2>
+        <p class="text-gray-500 mt-1">Clientes com histórico relevante que estão há muitos dias sem comprar.</p>
+      </div>
+
+      <div class="flex gap-3 flex-wrap items-end">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Mín. pedidos</label>
+          <input id="riscoMinPedidos" type="number" min="1" value="2" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-36" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Dias sem compra</label>
+          <input id="riscoDiasSemCompra" type="number" min="1" value="30" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-40" />
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div class="bg-red-50 rounded-2xl p-5 border border-red-100">
+        <p class="text-gray-500 mb-2">Clientes em Risco</p>
+        <h2 id="riscoTotalClientes" class="text-3xl font-bold text-red-600">0</h2>
+      </div>
+
+      <div class="bg-orange-50 rounded-2xl p-5 border border-orange-100">
+        <p class="text-gray-500 mb-2">Maior tempo sem compra</p>
+        <h2 id="riscoMaiorDias" class="text-3xl font-bold text-orange-600">0 dias</h2>
+      </div>
+
+      <div class="bg-purple-50 rounded-2xl p-5 border border-purple-100">
+        <p class="text-gray-500 mb-2">Valor histórico desses clientes</p>
+        <h2 id="riscoValorHistorico" class="text-3xl font-bold text-purple-600">R$ 0</h2>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b text-left text-gray-500">
+            <th class="pb-4">Cliente</th>
+            <th class="pb-4">Pedidos</th>
+            <th class="pb-4">Última Compra</th>
+            <th class="pb-4">Dias Sem Comprar</th>
+            <th class="pb-4">Total Histórico</th>
+            <th class="pb-4">Status</th>
+          </tr>
+        </thead>
+        <tbody id="clientesEmRiscoTabela"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <div id="modalPerdidos" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
@@ -962,8 +1070,10 @@ async function carregar(){
   popularSemanasPerformance();
   popularDiasPerformance();
   popularFiltroHistoricoCliente();
+  carregarFiltrosRisco();
   aplicarFiltros();
   gerarHistoricoCliente();
+  gerarClientesEmRisco();
   gerarPainelMetas();
   gerarPerformance();
 }
@@ -1050,6 +1160,114 @@ function popularFiltroHistoricoCliente(){
   if(anoAtual && ([...anos].map(String).includes(String(anoAtual)) || anoAtual === "Todos")){
     selectAno.value = anoAtual;
   }
+}
+
+function carregarFiltrosRisco(){
+  const minPedidos = localStorage.getItem("jng_crm_risco_min_pedidos") || "2";
+  const diasSemCompra = localStorage.getItem("jng_crm_risco_dias_sem_compra") || "30";
+
+  const campoMinPedidos = document.getElementById("riscoMinPedidos");
+  const campoDias = document.getElementById("riscoDiasSemCompra");
+
+  if(campoMinPedidos) campoMinPedidos.value = minPedidos;
+  if(campoDias) campoDias.value = diasSemCompra;
+}
+
+function salvarFiltrosRisco(){
+  const minPedidos = parseInt(document.getElementById("riscoMinPedidos")?.value || 2);
+  const diasSemCompra = parseInt(document.getElementById("riscoDiasSemCompra")?.value || 30);
+
+  localStorage.setItem("jng_crm_risco_min_pedidos", Math.max(minPedidos,1));
+  localStorage.setItem("jng_crm_risco_dias_sem_compra", Math.max(diasSemCompra,1));
+}
+
+function gerarClientesEmRisco(){
+  const tbody = document.getElementById("clientesEmRiscoTabela");
+  if(!tbody) return;
+
+  const minPedidos = parseInt(document.getElementById("riscoMinPedidos")?.value || localStorage.getItem("jng_crm_risco_min_pedidos") || 2);
+  const diasMinimos = parseInt(document.getElementById("riscoDiasSemCompra")?.value || localStorage.getItem("jng_crm_risco_dias_sem_compra") || 30);
+
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+
+  const clientes = {};
+
+  dadosOriginais.forEach(r => {
+    const cliente = getCliente(r) || "Sem Nome";
+    const dataTexto = getDataTexto(r);
+    const valor = getValor(r);
+
+    if(!dataTexto) return;
+
+    const data = converterDataBR(dataTexto);
+    if(isNaN(data.getTime())) return;
+
+    if(!clientes[cliente]){
+      clientes[cliente] = {
+        nome: cliente,
+        pedidos: 0,
+        total: 0,
+        ultimaCompra: data
+      };
+    }
+
+    clientes[cliente].pedidos++;
+    clientes[cliente].total += valor;
+
+    if(data > clientes[cliente].ultimaCompra){
+      clientes[cliente].ultimaCompra = data;
+    }
+  });
+
+  const lista = Object.values(clientes)
+    .map(item => {
+      const ultima = new Date(item.ultimaCompra);
+      ultima.setHours(0,0,0,0);
+      const diasSemComprar = Math.max(Math.floor((hoje - ultima) / (1000 * 60 * 60 * 24)),0);
+      return {...item, diasSemComprar};
+    })
+    .filter(item => item.pedidos >= minPedidos && item.diasSemComprar >= diasMinimos)
+    .sort((a,b) => b.diasSemComprar - a.diasSemComprar || b.total - a.total);
+
+  const maiorDias = lista.length ? Math.max(...lista.map(x => x.diasSemComprar)) : 0;
+  const valorHistorico = lista.reduce((acc,item) => acc + item.total,0);
+
+  document.getElementById("riscoTotalClientes").innerText = lista.length;
+  document.getElementById("riscoMaiorDias").innerText = `${maiorDias} dias`;
+  document.getElementById("riscoValorHistorico").innerText = dinheiro(valorHistorico);
+
+  tbody.innerHTML = "";
+
+  if(lista.length === 0){
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="py-6 text-center text-green-600 font-semibold">
+          Nenhum cliente em risco com os filtros atuais.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  lista.slice(0,30).forEach(item => {
+    const status = item.diasSemComprar >= 60
+      ? `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full font-bold text-xs">Risco Alto</span>`
+      : item.diasSemComprar >= 30
+        ? `<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold text-xs">Atenção</span>`
+        : `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-bold text-xs">Monitorar</span>`;
+
+    tbody.innerHTML += `
+      <tr class="table-hover border-b">
+        <td class="py-4 font-semibold">${item.nome}</td>
+        <td>${item.pedidos}</td>
+        <td>${item.ultimaCompra.toLocaleDateString("pt-BR")}</td>
+        <td class="font-bold text-red-600">${item.diasSemComprar} dias</td>
+        <td class="font-bold text-green-600">${dinheiro(item.total)}</td>
+        <td>${status}</td>
+      </tr>
+    `;
+  });
 }
 
 function gerarHistoricoCliente(){
@@ -1871,11 +2089,27 @@ async function exportarPdfPerformance(){
   }
 }
 
+
+function abrirModalVersao(){
+  document.getElementById("modalVersao").classList.add("open");
+}
+
+function fecharModalVersao(){
+  document.getElementById("modalVersao").classList.remove("open");
+}
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && document.getElementById("modalVersao")){
+    fecharModalVersao();
+  }
+});
+
 function abrirDashboard(){
   document.getElementById("dashboardCRM").classList.remove("hidden");
   document.getElementById("painelMetas").classList.add("hidden");
   document.getElementById("painelPerformance").classList.add("hidden");
   document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
 }
 
 function abrirMetas(){
@@ -1883,6 +2117,7 @@ function abrirMetas(){
   document.getElementById("painelMetas").classList.remove("hidden");
   document.getElementById("painelPerformance").classList.add("hidden");
   document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
   gerarPainelMetas();
 }
 
@@ -1891,10 +2126,21 @@ function abrirPerformance(){
   document.getElementById("painelMetas").classList.add("hidden");
   document.getElementById("painelPerformance").classList.remove("hidden");
   document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
   popularPeriodoPerformance();
   popularSemanasPerformance();
   popularDiasPerformance();
   gerarPerformance();
+}
+
+function abrirRisco(){
+  document.getElementById("dashboardCRM").classList.add("hidden");
+  document.getElementById("painelMetas").classList.add("hidden");
+  document.getElementById("painelPerformance").classList.add("hidden");
+  document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.remove("hidden");
+  carregarFiltrosRisco();
+  gerarClientesEmRisco();
 }
 
 function abrirConfig(){
@@ -1902,6 +2148,7 @@ function abrirConfig(){
   document.getElementById("painelMetas").classList.add("hidden");
   document.getElementById("painelPerformance").classList.add("hidden");
   document.getElementById("painelConfig").classList.remove("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
   preencherTelaConfig();
 }
 
@@ -1916,7 +2163,7 @@ document.getElementById("pesquisa").addEventListener("input",function(){
 preencherTelaConfig();
 carregar();
 
-setInterval(carregar,30000);
+// Atualização automática removida: os dados atualizam ao abrir/recarregar a página ou trocar filtros.
 </script>
 
 </body>
