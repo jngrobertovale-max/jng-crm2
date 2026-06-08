@@ -60,14 +60,18 @@
     <div class="flex justify-between items-start gap-4 mb-5">
       <div>
         <h2 class="text-2xl font-bold text-gray-800">Novidades da versão</h2>
-        <p class="text-gray-500 mt-1">JNG CRM • v1.6.1 • Build 2026.06.05</p>
+        <p class="text-gray-500 mt-1">JNG CRM • v1.7.0 • Build 2026.06.08</p>
       </div>
       <button onclick="fecharModalVersao()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold">X</button>
     </div>
 
     <div class="version-item">
       <div class="version-dot">✓</div>
-      <div><strong>Controle de versão visível</strong><br><span class="text-sm text-gray-500">Agora o CRM mostra a versão no topo direito, no lugar do botão de atualização automática.</span></div>
+      <div><strong>Filtros avançados no RISCO</strong><br><span class="text-sm text-gray-500">Agora é possível filtrar por cliente, status, dias sem comprar, mínimo de pedidos e total histórico.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Status Sem Volta</strong><br><span class="text-sm text-gray-500">Clientes há 120+ dias sem comprar são classificados como Sem Volta para facilitar a limpeza da carteira.</span></div>
     </div>
     <div class="version-item">
       <div class="version-dot">✓</div>
@@ -94,8 +98,8 @@
       <p class="text-gray-500 mt-2">Dashboard Comercial • Liberações</p>
     </div>
     <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
-      <strong>📋 Versão 1.6.1</strong>
-      <span>Build 2026.06.05</span>
+      <strong>📋 Versão 1.7.0</strong>
+      <span>Build 2026.06.08</span>
     </button>
   </div>
 
@@ -246,20 +250,40 @@
         <p class="text-gray-500 mt-1">Clientes com histórico relevante que estão há muitos dias sem comprar.</p>
       </div>
 
-      <div class="flex gap-3 flex-wrap items-end">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3 w-full lg:w-auto items-end">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Buscar cliente</label>
+          <input id="riscoBuscaCliente" type="text" placeholder="Nome do cliente" oninput="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Status</label>
+          <select id="riscoFiltroStatus" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+            <option value="Todos">Todos</option>
+            <option value="Atencao">Atenção</option>
+            <option value="Risco Alto">Risco Alto</option>
+            <option value="Sem Volta">Sem Volta</option>
+          </select>
+        </div>
+
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1">Mín. pedidos</label>
-          <input id="riscoMinPedidos" type="number" min="1" value="2" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-36" />
+          <input id="riscoMinPedidos" type="number" min="1" value="2" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
         </div>
 
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1">Dias sem compra</label>
-          <input id="riscoDiasSemCompra" type="number" min="1" value="30" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-40" />
+          <input id="riscoDiasSemCompra" type="number" min="1" value="30" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Histórico mínimo</label>
+          <input id="riscoTotalMinimo" type="text" placeholder="R$ 0" onblur="formatarCampoMoeda(this); salvarFiltrosRisco(); gerarClientesEmRisco();" oninput="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
       <div class="bg-red-50 rounded-2xl p-5 border border-red-100">
         <p class="text-gray-500 mb-2">Clientes em Risco</p>
         <h2 id="riscoTotalClientes" class="text-3xl font-bold text-red-600">0</h2>
@@ -274,6 +298,11 @@
         <p class="text-gray-500 mb-2">Valor histórico desses clientes</p>
         <h2 id="riscoValorHistorico" class="text-3xl font-bold text-purple-600">R$ 0</h2>
       </div>
+
+      <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+        <p class="text-gray-500 mb-2">Clientes sem volta</p>
+        <h2 id="riscoSemVolta" class="text-3xl font-bold text-gray-700">0</h2>
+      </div>
     </div>
 
     <div class="overflow-x-auto">
@@ -286,6 +315,9 @@
             <th class="pb-4">Dias Sem Comprar</th>
             <th class="pb-4">Total Histórico</th>
             <th class="pb-4">Status</th>
+            <th class="pb-4 min-w-[160px]">Contato WhatsApp</th>
+            <th class="pb-4 min-w-[320px]">Mensagem</th>
+            <th class="pb-4">Ação</th>
           </tr>
         </thead>
         <tbody id="clientesEmRiscoTabela"></tbody>
@@ -1162,23 +1194,127 @@ function popularFiltroHistoricoCliente(){
   }
 }
 
+function escapeHTML(valor){
+  return String(valor ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function chaveClienteRisco(cliente){
+  try{
+    return btoa(unescape(encodeURIComponent(String(cliente || "cliente")))).replace(/=/g,"");
+  }catch(e){
+    return String(cliente || "cliente").replace(/[^a-zA-Z0-9]/g,"_");
+  }
+}
+
+function mensagemPadraoRisco(cliente){
+  return `Olá, tudo bem?
+
+Notei que já faz um tempo desde o seu último pedido com a gente e queria entender se posso te ajudar com alguma nova cotação ou condição especial.
+
+Tem algum projeto em andamento que eu possa apoiar?`;
+}
+
+function obterContatoClienteRisco(cliente){
+  return localStorage.getItem(`jng_crm_contato_${chaveClienteRisco(cliente)}`) || "";
+}
+
+function obterMensagemClienteRisco(cliente){
+  return localStorage.getItem(`jng_crm_msg_${chaveClienteRisco(cliente)}`) || mensagemPadraoRisco(cliente);
+}
+
+function salvarContatoMensagemRisco(cliente){
+  const key = chaveClienteRisco(cliente);
+  const contato = document.getElementById(`contato_${key}`)?.value || "";
+  const mensagem = document.getElementById(`mensagem_${key}`)?.value || mensagemPadraoRisco(cliente);
+
+  localStorage.setItem(`jng_crm_contato_${key}`, contato.trim());
+  localStorage.setItem(`jng_crm_msg_${key}`, mensagem.trim());
+
+  const status = document.getElementById(`status_salvo_${key}`);
+  if(status){
+    status.innerText = "Salvo";
+    status.classList.remove("text-gray-400");
+    status.classList.add("text-green-600");
+    setTimeout(()=>{
+      status.innerText = "";
+    },1800);
+  }
+}
+
+function abrirWhatsAppRisco(cliente){
+  const key = chaveClienteRisco(cliente);
+  const contatoCampo = document.getElementById(`contato_${key}`);
+  const mensagemCampo = document.getElementById(`mensagem_${key}`);
+
+  const contato = String(contatoCampo?.value || obterContatoClienteRisco(cliente) || "").replace(/\D/g,"");
+  const mensagem = String(mensagemCampo?.value || obterMensagemClienteRisco(cliente) || mensagemPadraoRisco(cliente)).trim();
+
+  if(!contato){
+    alert("Preencha o WhatsApp do cliente antes de enviar a mensagem.");
+    contatoCampo?.focus();
+    return;
+  }
+
+  const numero = contato.startsWith("55") ? contato : `55${contato}`;
+
+  localStorage.setItem(`jng_crm_contato_${key}`, contatoCampo?.value.trim() || contato);
+  localStorage.setItem(`jng_crm_msg_${key}`, mensagem);
+
+  const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url,"_blank");
+}
+
 function carregarFiltrosRisco(){
   const minPedidos = localStorage.getItem("jng_crm_risco_min_pedidos") || "2";
   const diasSemCompra = localStorage.getItem("jng_crm_risco_dias_sem_compra") || "30";
+  const buscaCliente = localStorage.getItem("jng_crm_risco_busca_cliente") || "";
+  const status = localStorage.getItem("jng_crm_risco_status") || "Todos";
+  const totalMinimo = localStorage.getItem("jng_crm_risco_total_minimo") || "";
 
   const campoMinPedidos = document.getElementById("riscoMinPedidos");
   const campoDias = document.getElementById("riscoDiasSemCompra");
+  const campoBusca = document.getElementById("riscoBuscaCliente");
+  const campoStatus = document.getElementById("riscoFiltroStatus");
+  const campoTotal = document.getElementById("riscoTotalMinimo");
 
   if(campoMinPedidos) campoMinPedidos.value = minPedidos;
   if(campoDias) campoDias.value = diasSemCompra;
+  if(campoBusca) campoBusca.value = buscaCliente;
+  if(campoStatus) campoStatus.value = status;
+  if(campoTotal) campoTotal.value = totalMinimo ? dinheiro(parseMoedaBR(totalMinimo)) : "";
 }
 
 function salvarFiltrosRisco(){
   const minPedidos = parseInt(document.getElementById("riscoMinPedidos")?.value || 2);
   const diasSemCompra = parseInt(document.getElementById("riscoDiasSemCompra")?.value || 30);
+  const buscaCliente = document.getElementById("riscoBuscaCliente")?.value || "";
+  const status = document.getElementById("riscoFiltroStatus")?.value || "Todos";
+  const totalMinimo = parseMoedaBR(document.getElementById("riscoTotalMinimo")?.value || 0);
 
   localStorage.setItem("jng_crm_risco_min_pedidos", Math.max(minPedidos,1));
   localStorage.setItem("jng_crm_risco_dias_sem_compra", Math.max(diasSemCompra,1));
+  localStorage.setItem("jng_crm_risco_busca_cliente", buscaCliente);
+  localStorage.setItem("jng_crm_risco_status", status);
+  localStorage.setItem("jng_crm_risco_total_minimo", totalMinimo);
+}
+
+function statusClienteRisco(diasSemComprar){
+  if(diasSemComprar >= 120) return "Sem Volta";
+  if(diasSemComprar >= 60) return "Risco Alto";
+  if(diasSemComprar >= 30) return "Atencao";
+  return "Monitorar";
+}
+
+function badgeStatusRisco(status){
+  if(status === "Sem Volta") return `<span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full font-bold text-xs">Sem Volta</span>`;
+  if(status === "Risco Alto") return `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full font-bold text-xs">Risco Alto</span>`;
+  if(status === "Atencao") return `<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold text-xs">Atenção</span>`;
+  return `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-bold text-xs">Monitorar</span>`;
 }
 
 function gerarClientesEmRisco(){
@@ -1187,6 +1323,9 @@ function gerarClientesEmRisco(){
 
   const minPedidos = parseInt(document.getElementById("riscoMinPedidos")?.value || localStorage.getItem("jng_crm_risco_min_pedidos") || 2);
   const diasMinimos = parseInt(document.getElementById("riscoDiasSemCompra")?.value || localStorage.getItem("jng_crm_risco_dias_sem_compra") || 30);
+  const buscaCliente = normalizar(document.getElementById("riscoBuscaCliente")?.value || localStorage.getItem("jng_crm_risco_busca_cliente") || "");
+  const statusSelecionado = document.getElementById("riscoFiltroStatus")?.value || localStorage.getItem("jng_crm_risco_status") || "Todos";
+  const totalMinimo = parseMoedaBR(document.getElementById("riscoTotalMinimo")?.value || localStorage.getItem("jng_crm_risco_total_minimo") || 0);
 
   const hoje = new Date();
   hoje.setHours(0,0,0,0);
@@ -1225,24 +1364,31 @@ function gerarClientesEmRisco(){
       const ultima = new Date(item.ultimaCompra);
       ultima.setHours(0,0,0,0);
       const diasSemComprar = Math.max(Math.floor((hoje - ultima) / (1000 * 60 * 60 * 24)),0);
-      return {...item, diasSemComprar};
+      const statusTexto = statusClienteRisco(diasSemComprar);
+      return {...item, diasSemComprar, statusTexto};
     })
-    .filter(item => item.pedidos >= minPedidos && item.diasSemComprar >= diasMinimos)
+    .filter(item => item.pedidos >= minPedidos)
+    .filter(item => item.diasSemComprar >= diasMinimos)
+    .filter(item => item.total >= totalMinimo)
+    .filter(item => !buscaCliente || normalizar(item.nome).includes(buscaCliente))
+    .filter(item => statusSelecionado === "Todos" || item.statusTexto === statusSelecionado)
     .sort((a,b) => b.diasSemComprar - a.diasSemComprar || b.total - a.total);
 
   const maiorDias = lista.length ? Math.max(...lista.map(x => x.diasSemComprar)) : 0;
   const valorHistorico = lista.reduce((acc,item) => acc + item.total,0);
+  const totalSemVolta = lista.filter(item => item.statusTexto === "Sem Volta").length;
 
   document.getElementById("riscoTotalClientes").innerText = lista.length;
   document.getElementById("riscoMaiorDias").innerText = `${maiorDias} dias`;
   document.getElementById("riscoValorHistorico").innerText = dinheiro(valorHistorico);
+  document.getElementById("riscoSemVolta").innerText = totalSemVolta;
 
   tbody.innerHTML = "";
 
   if(lista.length === 0){
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" class="py-6 text-center text-green-600 font-semibold">
+        <td colspan="9" class="py-6 text-center text-green-600 font-semibold">
           Nenhum cliente em risco com os filtros atuais.
         </td>
       </tr>
@@ -1250,21 +1396,34 @@ function gerarClientesEmRisco(){
     return;
   }
 
-  lista.slice(0,30).forEach(item => {
-    const status = item.diasSemComprar >= 60
-      ? `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full font-bold text-xs">Risco Alto</span>`
-      : item.diasSemComprar >= 30
-        ? `<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold text-xs">Atenção</span>`
-        : `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-bold text-xs">Monitorar</span>`;
+  lista.slice(0,50).forEach(item => {
+    const status = badgeStatusRisco(item.statusTexto);
+
+    const key = chaveClienteRisco(item.nome);
+    const contatoSalvo = obterContatoClienteRisco(item.nome);
+    const mensagemSalva = obterMensagemClienteRisco(item.nome);
 
     tbody.innerHTML += `
-      <tr class="table-hover border-b">
-        <td class="py-4 font-semibold">${item.nome}</td>
-        <td>${item.pedidos}</td>
-        <td>${item.ultimaCompra.toLocaleDateString("pt-BR")}</td>
-        <td class="font-bold text-red-600">${item.diasSemComprar} dias</td>
-        <td class="font-bold text-green-600">${dinheiro(item.total)}</td>
-        <td>${status}</td>
+      <tr class="table-hover border-b align-top">
+        <td class="py-4 font-semibold">${escapeHTML(item.nome)}</td>
+        <td class="py-4">${item.pedidos}</td>
+        <td class="py-4">${item.ultimaCompra.toLocaleDateString("pt-BR")}</td>
+        <td class="py-4 font-bold text-red-600">${item.diasSemComprar} dias</td>
+        <td class="py-4 font-bold text-green-600">${dinheiro(item.total)}</td>
+        <td class="py-4">${status}</td>
+        <td class="py-4">
+          <input id="contato_${key}" value="${escapeHTML(contatoSalvo)}" placeholder="Ex: 11999999999" class="border border-gray-300 rounded-xl px-3 py-2 bg-white w-40 text-sm">
+        </td>
+        <td class="py-4">
+          <textarea id="mensagem_${key}" class="border border-gray-300 rounded-xl px-3 py-2 bg-white w-full min-h-[96px] text-sm resize-y">${escapeHTML(mensagemSalva)}</textarea>
+        </td>
+        <td class="py-4">
+          <div class="flex flex-col gap-2 min-w-[140px]">
+            <button onclick='salvarContatoMensagemRisco(${JSON.stringify(item.nome)})' class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-xl text-xs font-semibold">Salvar</button>
+            <button onclick='abrirWhatsAppRisco(${JSON.stringify(item.nome)})' class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-xl text-xs font-semibold">WhatsApp</button>
+            <span id="status_salvo_${key}" class="text-xs text-gray-400 h-4"></span>
+          </div>
+        </td>
       </tr>
     `;
   });
