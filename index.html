@@ -14,10 +14,33 @@
     body{background:#f4f7fb;font-family:Arial,sans-serif;}
     .card{background:white;border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(0,0,0,0.06);}
     .table-hover:hover{background:#f3f6ff;transition:0.2s;}
-    .sidebar{position:fixed;left:0;top:0;width:90px;height:100vh;background:#111827;display:flex;flex-direction:column;align-items:center;padding-top:30px;gap:20px;z-index:999;}
-    .sidebar button{width:60px;height:60px;border-radius:18px;border:none;color:white;font-weight:bold;cursor:pointer;font-size:11px;}
-    .sidebar button:hover{transform:scale(1.05);}
-    .content{margin-left:110px;}
+    .sidebar{position:fixed;left:0;top:0;width:250px;height:100vh;background:linear-gradient(180deg,#0f172a 0%,#111827 55%,#020617 100%);display:flex;flex-direction:column;padding:20px 14px;gap:12px;z-index:999;box-shadow:12px 0 32px rgba(15,23,42,.18);transition:width .25s ease,padding .25s ease;}
+    .sidebar.collapsed{width:88px;padding:20px 12px;align-items:center;}
+    .sidebar-brand{width:100%;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);border-radius:22px;padding:16px 14px;color:white;display:flex;align-items:center;gap:12px;margin-bottom:8px;overflow:hidden;}
+    .brand-icon{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;flex:none;box-shadow:0 10px 24px rgba(37,99,235,.28);}
+    .brand-text{line-height:1.15;white-space:nowrap;transition:opacity .2s ease;}
+    .brand-text strong{display:block;font-size:13px;letter-spacing:.06em;}
+    .brand-text span{font-size:11px;color:#cbd5e1;}
+    .sidebar.collapsed .brand-text{opacity:0;width:0;overflow:hidden;}
+    .sidebar-toggle{width:100%;height:36px;border-radius:13px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);color:#e5e7eb;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.2s;}
+    .sidebar-toggle:hover{background:rgba(255,255,255,.14);transform:translateY(-1px);}
+    .sidebar-nav{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:8px;}
+    .sidebar-main-nav{flex:1;}
+    .sidebar-config-area{width:100%;margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);}
+    .side-btn{width:100%;height:52px;border-radius:17px;border:1px solid transparent;color:#cbd5e1;font-weight:800;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:12px;padding:0 14px;background:transparent;transition:.2s;position:relative;overflow:hidden;}
+    .side-btn:hover{background:rgba(255,255,255,.08);color:white;transform:translateX(2px);}
+    .side-btn.active{background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;box-shadow:0 12px 28px rgba(79,70,229,.34);}
+    .side-ico{font-size:20px;width:26px;text-align:center;flex:none;}
+    .side-label{white-space:nowrap;transition:opacity .2s ease;}
+    .sidebar.collapsed .side-btn{width:58px;padding:0;justify-content:center;}
+    .sidebar.collapsed .side-label{opacity:0;width:0;overflow:hidden;}
+    .sidebar.collapsed .sidebar-toggle .toggle-text,.sidebar.collapsed .sidebar-toggle .toggle-menu-icon{display:none;}
+    .content{margin-left:280px;transition:margin-left .25s ease;}
+    body.sidebar-collapsed .content{margin-left:112px;}
+    .editable-title{cursor:text;border-radius:12px;padding:2px 8px;margin-left:-8px;transition:.2s;}
+    .editable-title:hover,.editable-title:focus{background:#eef2ff;outline:none;box-shadow:0 0 0 2px rgba(37,99,235,.12);}
+    .seller-name-input{border:none;background:transparent;color:#6b7280;border-radius:10px;padding:2px 6px;min-width:160px;}
+    .seller-name-input:hover,.seller-name-input:focus{background:#eef2ff;outline:none;box-shadow:0 0 0 2px rgba(37,99,235,.12);}
     .meta-card{border-left:6px solid #2563eb;}
     input,select,textarea{outline:none;}
     .progress-bg{background:#e5e7eb;border-radius:999px;height:12px;overflow:hidden;}
@@ -30,30 +53,100 @@
     .alert-success{border-left-color:#22c55e;background:#f0fdf4;}
     .alert-info{border-left-color:#3b82f6;background:#eff6ff;}
     .action-card{border:1px solid #e5e7eb;border-radius:18px;padding:18px;background:#ffffff;}
+
+    .version-badge{background:#111827;color:white;border-radius:16px;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:12px;line-height:1.35;border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:.2s;text-align:left;min-width:150px;}
+    .version-badge:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(0,0,0,.28);}
+    .version-badge strong{display:block;font-size:13px;color:#ffffff;}
+    .version-badge span{color:#cbd5e1;}
+    .version-modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
+    .version-modal.open{display:flex;}
+    .version-box{background:white;border-radius:24px;max-width:560px;width:100%;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.30);}
+    .version-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eef2f7;color:#374151;}
+    .version-item:last-child{border-bottom:none;}
+    .version-dot{width:22px;height:22px;border-radius:999px;background:#ede9fe;color:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex:none;}
     @media print{.sidebar,.filter-panel button,#btnExportarPdfPerf{display:none!important}.content{margin-left:0}.card{box-shadow:none;border:1px solid #e5e7eb}}
   </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-  <button onclick="abrirDashboard()" class="bg-blue-600">CRM</button>
-  <button onclick="abrirMetas()" class="bg-green-600">META</button>
-  <button onclick="abrirPerformance()" class="bg-purple-600">PERF.</button>
-  <button onclick="abrirConfig()" class="bg-gray-600">CONFIG</button>
+<div id="sidebar" class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">J</div>
+    <div class="brand-text">
+      <strong>CRM COMERCIAL</strong>
+      <span>v1.8.10</span>
+    </div>
+  </div>
+
+  <button id="btnToggleSidebar" onclick="toggleSidebar()" class="sidebar-toggle" title="Recolher/expandir menu">
+    <span class="toggle-menu-icon">☰</span><span class="toggle-text">Menu</span><span id="toggleArrow">◀</span>
+  </button>
+
+  <div class="sidebar-nav sidebar-main-nav">
+    <button id="navCRM" onclick="abrirDashboard()" class="side-btn active"><span class="side-ico">📊</span><span class="side-label">CRM</span></button>
+    <button id="navMetas" onclick="abrirMetas()" class="side-btn"><span class="side-ico">🎯</span><span class="side-label">Metas</span></button>
+    <button id="navPerf" onclick="abrirPerformance()" class="side-btn"><span class="side-ico">📈</span><span class="side-label">Performance</span></button>
+    <button id="navRisco" onclick="abrirRisco()" class="side-btn"><span class="side-ico">🚨</span><span class="side-label">Risco</span></button>
+    <button id="navAtiv" onclick="abrirAtividades()" class="side-btn"><span class="side-ico">📋</span><span class="side-label">Atividades</span></button>
+  </div>
+
+  <div class="sidebar-config-area">
+    <button id="navConfig" onclick="abrirConfig()" class="side-btn"><span class="side-ico">⚙️</span><span class="side-label">Config</span></button>
+  </div>
 </div>
+
+<div id="modalVersao" class="version-modal">
+  <div class="version-box">
+    <div class="flex justify-between items-start gap-4 mb-5">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Novidades da versão</h2>
+        <p class="text-gray-500 mt-1">JNG CRM • v1.8.10 • Build 2026.06.09</p>
+      </div>
+      <button onclick="fecharModalVersao()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold">X</button>
+    </div>
+
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Aba ATIV. adicionada</strong><br><span class="text-sm text-gray-500">Agora é possível registrar atividades diárias, histórico, cliente, tipo e feedback.</span></div>
+    </div>
+
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Filtros de atividades</strong><br><span class="text-sm text-gray-500">Filtro por data, cliente e tipo: Orçamento, Pedido, Ligação, Reunião, Follow-up e Outros.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Status Sem Volta</strong><br><span class="text-sm text-gray-500">Clientes há 120+ dias sem comprar são classificados como Sem Volta para facilitar a limpeza da carteira.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Modal de novidades</strong><br><span class="text-sm text-gray-500">Ao clicar na versão, você vê as principais alterações da atualização.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Metas individuais por vendedor</strong><br><span class="text-sm text-gray-500">Cada usuário pode definir sua própria meta no navegador.</span></div>
+    </div>
+    <div class="version-item">
+      <div class="version-dot">✓</div>
+      <div><strong>Configuração simplificada</strong><br><span class="text-sm text-gray-500">A configuração não exige mais coluna de Pedido.</span></div>
+    </div>
+  </div>
+</div>
+
 
 <div class="content p-8">
 
 <div id="dashboardCRM">
   <div class="flex justify-between items-center mb-10">
     <div>
-      <h1 class="text-4xl font-bold text-gray-800">JNG CRM</h1>
-      <p class="text-gray-500 mt-2">Dashboard Comercial • Liberações</p>
+      <h1 id="tituloCRM" contenteditable="true" onblur="salvarIdentidadeCRM()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="text-4xl font-bold text-gray-800 editable-title" title="Clique para editar o nome do CRM">JNG CRM</h1>
+      <p class="text-gray-500 mt-2">Dashboard Comercial <span id="separadorVendedor" class="hidden">•</span> <input id="nomeVendedorCRM" oninput="salvarIdentidadeCRM()" class="seller-name-input" placeholder="Nome do vendedor" title="Digite o nome do vendedor"></p>
     </div>
-    <div class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg">
-      Atualização Automática
-    </div>
+    <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
+      <strong>📋 Versão 1.8.10</strong>
+      <span>Build 2026.06.09</span>
+    </button>
   </div>
 
   <div class="flex gap-4 mb-8 flex-wrap">
@@ -165,6 +258,7 @@
     </div>
   </div>
 
+
   <div class="card">
     <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
       <h2 class="text-2xl font-bold text-gray-700">Ranking Integradores</h2>
@@ -183,6 +277,226 @@
         </thead>
         <tbody id="rankingTabela"></tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<div id="painelRisco" class="hidden">
+  <div class="flex justify-between items-center mb-10 flex-wrap gap-4">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Clientes em Risco</h1>
+      <p class="text-gray-500 mt-2">Acompanhamento de clientes com histórico relevante sem compra recente</p>
+    </div>
+  </div>
+
+  <div class="card mb-10">
+    <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-700">🚨 Clientes em Risco</h2>
+        <p class="text-gray-500 mt-1">Clientes com histórico relevante que estão há muitos dias sem comprar.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3 w-full lg:w-auto items-end">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Buscar cliente</label>
+          <input id="riscoBuscaCliente" type="text" placeholder="Nome do cliente" oninput="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Status</label>
+          <select id="riscoFiltroStatus" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+            <option value="Todos">Todos</option>
+            <option value="Atencao">Atenção</option>
+            <option value="Risco Alto">Risco Alto</option>
+            <option value="Sem Volta">Sem Volta</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Mín. pedidos</label>
+          <input id="riscoMinPedidos" type="number" min="1" value="2" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Dias sem compra</label>
+          <input id="riscoDiasSemCompra" type="number" min="1" value="30" onchange="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Histórico mínimo</label>
+          <input id="riscoTotalMinimo" type="text" placeholder="R$ 0" onblur="formatarCampoMoeda(this); salvarFiltrosRisco(); gerarClientesEmRisco();" oninput="salvarFiltrosRisco(); gerarClientesEmRisco();" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full" />
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <div class="bg-red-50 rounded-2xl p-5 border border-red-100">
+        <p class="text-gray-500 mb-2">Clientes em Risco</p>
+        <h2 id="riscoTotalClientes" class="text-3xl font-bold text-red-600">0</h2>
+      </div>
+
+      <div class="bg-orange-50 rounded-2xl p-5 border border-orange-100">
+        <p class="text-gray-500 mb-2">Maior tempo sem compra</p>
+        <h2 id="riscoMaiorDias" class="text-3xl font-bold text-orange-600">0 dias</h2>
+      </div>
+
+      <div class="bg-purple-50 rounded-2xl p-5 border border-purple-100">
+        <p class="text-gray-500 mb-2">Valor histórico desses clientes</p>
+        <h2 id="riscoValorHistorico" class="text-3xl font-bold text-purple-600">R$ 0</h2>
+      </div>
+
+      <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+        <p class="text-gray-500 mb-2">Clientes sem volta</p>
+        <h2 id="riscoSemVolta" class="text-3xl font-bold text-gray-700">0</h2>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b text-left text-gray-500">
+            <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarRisco('nome')">Cliente <span id="sortRisco_nome">↕</span></th>
+            <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarRisco('pedidos')">Pedidos <span id="sortRisco_pedidos">↕</span></th>
+            <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarRisco('ultimaCompra')">Última Compra <span id="sortRisco_ultimaCompra">↕</span></th>
+            <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarRisco('diasSemComprar')">Dias Sem Comprar <span id="sortRisco_diasSemComprar">↕</span></th>
+            <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarRisco('total')">Total Histórico <span id="sortRisco_total">↕</span></th>
+            <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarRisco('statusTexto')">Status <span id="sortRisco_statusTexto">↕</span></th>
+            <th class="pb-4 min-w-[160px]">Contato WhatsApp</th>
+            <th class="pb-4 min-w-[320px]">Mensagem</th>
+            <th class="pb-4">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="clientesEmRiscoTabela"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<div id="painelAtividades" class="hidden">
+  <div class="flex justify-between items-center mb-10 flex-wrap gap-4">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Atividades Comerciais</h1>
+      <p class="text-gray-500 mt-2">Registre sua rotina diária e acompanhe o histórico comercial.</p>
+    </div>
+    <button onclick="abrirFormularioAtividade()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold shadow">Preencher Atividade</button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+    <div id="formularioAtividadeCard" class="card lg:col-span-1 hidden">
+      <div class="flex justify-between items-center mb-5 gap-3">
+        <h2 id="atividadeTituloFormulario" class="text-2xl font-bold text-gray-700">Registrar Atividade</h2>
+        <button onclick="fecharFormularioAtividade()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-xl font-bold">X</button>
+      </div>
+
+      <input id="atividadeIdEdicao" type="hidden">
+
+      <div class="mb-4">
+        <label class="block text-xs font-bold text-gray-500 mb-1">Data da atividade</label>
+        <input id="atividadeData" type="date" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-bold text-gray-500 mb-1">Tipo de atividade</label>
+        <select id="atividadeTipo" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+          <option value="Orçamento">Orçamento</option>
+          <option value="Pedido">Pedido</option>
+          <option value="Ligação">Ligação</option>
+          <option value="Reunião">Reunião</option>
+          <option value="Follow-up">Follow-up</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs font-bold text-gray-500 mb-1">Nome do cliente</label>
+        <input id="atividadeCliente" type="text" placeholder="Ex: AGAPE" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+      </div>
+
+      <div class="mb-5">
+        <label class="block text-xs font-bold text-gray-500 mb-1">Feedback</label>
+        <textarea id="atividadeFeedback" rows="5" placeholder="Descreva o retorno, próximos passos ou observações..." class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full resize-none"></textarea>
+      </div>
+
+      <button onclick="salvarAtividadeComercial()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-semibold shadow w-full">Salvar Atividade</button>
+      <p id="atividadeMensagem" class="text-sm mt-3 text-gray-500"></p>
+    </div>
+
+    <div class="lg:col-span-2">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="card">
+          <p class="text-gray-500 mb-2">Atividades</p>
+          <h2 id="ativTotal" class="text-3xl font-bold text-yellow-600">0</h2>
+        </div>
+        <div class="card">
+          <p class="text-gray-500 mb-2">Hoje</p>
+          <h2 id="ativHoje" class="text-3xl font-bold text-blue-600">0</h2>
+        </div>
+        <div class="card">
+          <p class="text-gray-500 mb-2">Clientes</p>
+          <h2 id="ativClientes" class="text-3xl font-bold text-purple-600">0</h2>
+        </div>
+        <div class="card">
+          <p class="text-gray-500 mb-2">Tipo destaque</p>
+          <h2 id="ativTipoTop" class="text-2xl font-bold text-green-600">-</h2>
+        </div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">Tipo</label>
+            <select id="filtroAtividadeTipo" onchange="renderAtividadesComerciais()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+              <option value="Todos">Todos</option>
+              <option value="Orçamento">Orçamento</option>
+              <option value="Pedido">Pedido</option>
+              <option value="Ligação">Ligação</option>
+              <option value="Reunião">Reunião</option>
+              <option value="Follow-up">Follow-up</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">Data inicial</label>
+            <input id="filtroAtividadeDataInicio" type="date" onchange="renderAtividadesComerciais()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">Data final</label>
+            <input id="filtroAtividadeDataFim" type="date" onchange="renderAtividadesComerciais()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">Buscar cliente</label>
+            <input id="filtroAtividadeCliente" type="text" oninput="renderAtividadesComerciais()" placeholder="Nome do cliente" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+          <h2 class="text-2xl font-bold text-gray-700">Histórico de Atividades</h2>
+          <button onclick="limparFiltrosAtividades()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-semibold">Limpar filtros</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b text-left text-gray-500">
+                <th class="pb-4 text-center">Data</th>
+                <th class="pb-4 text-center">Hora</th>
+                <th class="pb-4 text-center">Tipo</th>
+                <th class="pb-4 text-center">Cliente</th>
+                <th class="pb-4 text-center">Feedback</th>
+                <th class="pb-4 text-center">Editado em</th>
+                <th class="pb-4 text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="atividadesTabela"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -962,10 +1276,13 @@ async function carregar(){
   popularSemanasPerformance();
   popularDiasPerformance();
   popularFiltroHistoricoCliente();
+  carregarFiltrosRisco();
   aplicarFiltros();
   gerarHistoricoCliente();
+  gerarClientesEmRisco();
   gerarPainelMetas();
   gerarPerformance();
+  inicializarAtividades();
 }
 
 async function carregarLiberacoes(){
@@ -1050,6 +1367,285 @@ function popularFiltroHistoricoCliente(){
   if(anoAtual && ([...anos].map(String).includes(String(anoAtual)) || anoAtual === "Todos")){
     selectAno.value = anoAtual;
   }
+}
+
+function escapeHTML(valor){
+  return String(valor ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function chaveClienteRisco(cliente){
+  try{
+    return btoa(unescape(encodeURIComponent(String(cliente || "cliente")))).replace(/=/g,"");
+  }catch(e){
+    return String(cliente || "cliente").replace(/[^a-zA-Z0-9]/g,"_");
+  }
+}
+
+function mensagemPadraoRisco(cliente){
+  return `Olá, tudo bem?
+
+Notei que já faz um tempo desde o seu último pedido com a gente e queria entender se posso te ajudar com alguma nova cotação ou condição especial.
+
+Tem algum projeto em andamento que eu possa apoiar?`;
+}
+
+function obterContatoClienteRisco(cliente){
+  return localStorage.getItem(`jng_crm_contato_${chaveClienteRisco(cliente)}`) || "";
+}
+
+function obterMensagemClienteRisco(cliente){
+  return localStorage.getItem(`jng_crm_msg_${chaveClienteRisco(cliente)}`) || mensagemPadraoRisco(cliente);
+}
+
+function salvarContatoMensagemRisco(cliente){
+  const key = chaveClienteRisco(cliente);
+  const contato = document.getElementById(`contato_${key}`)?.value || "";
+  const mensagem = document.getElementById(`mensagem_${key}`)?.value || mensagemPadraoRisco(cliente);
+
+  localStorage.setItem(`jng_crm_contato_${key}`, contato.trim());
+  localStorage.setItem(`jng_crm_msg_${key}`, mensagem.trim());
+
+  const status = document.getElementById(`status_salvo_${key}`);
+  if(status){
+    status.innerText = "Salvo";
+    status.classList.remove("text-gray-400");
+    status.classList.add("text-green-600");
+    setTimeout(()=>{
+      status.innerText = "";
+    },1800);
+  }
+}
+
+function abrirWhatsAppRisco(cliente){
+  const key = chaveClienteRisco(cliente);
+  const contatoCampo = document.getElementById(`contato_${key}`);
+  const mensagemCampo = document.getElementById(`mensagem_${key}`);
+
+  const contato = String(contatoCampo?.value || obterContatoClienteRisco(cliente) || "").replace(/\D/g,"");
+  const mensagem = String(mensagemCampo?.value || obterMensagemClienteRisco(cliente) || mensagemPadraoRisco(cliente)).trim();
+
+  if(!contato){
+    alert("Preencha o WhatsApp do cliente antes de enviar a mensagem.");
+    contatoCampo?.focus();
+    return;
+  }
+
+  const numero = contato.startsWith("55") ? contato : `55${contato}`;
+
+  localStorage.setItem(`jng_crm_contato_${key}`, contatoCampo?.value.trim() || contato);
+  localStorage.setItem(`jng_crm_msg_${key}`, mensagem);
+
+  const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url,"_blank");
+}
+
+function carregarFiltrosRisco(){
+  const minPedidos = localStorage.getItem("jng_crm_risco_min_pedidos") || "2";
+  const diasSemCompra = localStorage.getItem("jng_crm_risco_dias_sem_compra") || "30";
+  const buscaCliente = localStorage.getItem("jng_crm_risco_busca_cliente") || "";
+  const status = localStorage.getItem("jng_crm_risco_status") || "Todos";
+  const totalMinimo = localStorage.getItem("jng_crm_risco_total_minimo") || "";
+
+  const campoMinPedidos = document.getElementById("riscoMinPedidos");
+  const campoDias = document.getElementById("riscoDiasSemCompra");
+  const campoBusca = document.getElementById("riscoBuscaCliente");
+  const campoStatus = document.getElementById("riscoFiltroStatus");
+  const campoTotal = document.getElementById("riscoTotalMinimo");
+
+  if(campoMinPedidos) campoMinPedidos.value = minPedidos;
+  if(campoDias) campoDias.value = diasSemCompra;
+  if(campoBusca) campoBusca.value = buscaCliente;
+  if(campoStatus) campoStatus.value = status;
+  if(campoTotal) campoTotal.value = totalMinimo ? dinheiro(parseMoedaBR(totalMinimo)) : "";
+}
+
+function salvarFiltrosRisco(){
+  const minPedidos = parseInt(document.getElementById("riscoMinPedidos")?.value || 2);
+  const diasSemCompra = parseInt(document.getElementById("riscoDiasSemCompra")?.value || 30);
+  const buscaCliente = document.getElementById("riscoBuscaCliente")?.value || "";
+  const status = document.getElementById("riscoFiltroStatus")?.value || "Todos";
+  const totalMinimo = parseMoedaBR(document.getElementById("riscoTotalMinimo")?.value || 0);
+
+  localStorage.setItem("jng_crm_risco_min_pedidos", Math.max(minPedidos,1));
+  localStorage.setItem("jng_crm_risco_dias_sem_compra", Math.max(diasSemCompra,1));
+  localStorage.setItem("jng_crm_risco_busca_cliente", buscaCliente);
+  localStorage.setItem("jng_crm_risco_status", status);
+  localStorage.setItem("jng_crm_risco_total_minimo", totalMinimo);
+}
+
+function statusClienteRisco(diasSemComprar){
+  if(diasSemComprar >= 120) return "Sem Volta";
+  if(diasSemComprar >= 60) return "Risco Alto";
+  if(diasSemComprar >= 30) return "Atencao";
+  return "Monitorar";
+}
+
+function badgeStatusRisco(status){
+  if(status === "Sem Volta") return `<span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full font-bold text-xs">Sem Volta</span>`;
+  if(status === "Risco Alto") return `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full font-bold text-xs">Risco Alto</span>`;
+  if(status === "Atencao") return `<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full font-bold text-xs">Atenção</span>`;
+  return `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-bold text-xs">Monitorar</span>`;
+}
+
+let ordenacaoRisco = { campo: localStorage.getItem("jng_crm_risco_sort_campo") || "diasSemComprar", direcao: localStorage.getItem("jng_crm_risco_sort_direcao") || "desc" };
+
+function ordenarRisco(campo){
+  if(ordenacaoRisco.campo === campo){
+    ordenacaoRisco.direcao = ordenacaoRisco.direcao === "asc" ? "desc" : "asc";
+  }else{
+    ordenacaoRisco.campo = campo;
+    ordenacaoRisco.direcao = campo === "nome" || campo === "statusTexto" ? "asc" : "desc";
+  }
+
+  localStorage.setItem("jng_crm_risco_sort_campo", ordenacaoRisco.campo);
+  localStorage.setItem("jng_crm_risco_sort_direcao", ordenacaoRisco.direcao);
+  gerarClientesEmRisco();
+}
+
+function atualizarIndicadoresOrdenacaoRisco(){
+  ["nome","pedidos","ultimaCompra","diasSemComprar","total","statusTexto"].forEach(campo => {
+    const el = document.getElementById(`sortRisco_${campo}`);
+    if(!el) return;
+    el.innerText = ordenacaoRisco.campo === campo ? (ordenacaoRisco.direcao === "asc" ? "▲" : "▼") : "↕";
+  });
+}
+
+function compararRisco(a,b){
+  const campo = ordenacaoRisco.campo || "diasSemComprar";
+  const direcao = ordenacaoRisco.direcao === "asc" ? 1 : -1;
+  let resultado = 0;
+
+  if(campo === "nome" || campo === "statusTexto"){
+    resultado = String(a[campo] || "").localeCompare(String(b[campo] || ""), "pt-BR");
+  }else if(campo === "ultimaCompra"){
+    resultado = new Date(a.ultimaCompra).getTime() - new Date(b.ultimaCompra).getTime();
+  }else{
+    resultado = Number(a[campo] || 0) - Number(b[campo] || 0);
+  }
+
+  if(resultado === 0){
+    resultado = Number(b.total || 0) - Number(a.total || 0);
+  }
+
+  return resultado * direcao;
+}
+
+function gerarClientesEmRisco(){
+  const tbody = document.getElementById("clientesEmRiscoTabela");
+  if(!tbody) return;
+  atualizarIndicadoresOrdenacaoRisco();
+
+  const minPedidos = parseInt(document.getElementById("riscoMinPedidos")?.value || localStorage.getItem("jng_crm_risco_min_pedidos") || 2);
+  const diasMinimos = parseInt(document.getElementById("riscoDiasSemCompra")?.value || localStorage.getItem("jng_crm_risco_dias_sem_compra") || 30);
+  const buscaCliente = normalizar(document.getElementById("riscoBuscaCliente")?.value || localStorage.getItem("jng_crm_risco_busca_cliente") || "");
+  const statusSelecionado = document.getElementById("riscoFiltroStatus")?.value || localStorage.getItem("jng_crm_risco_status") || "Todos";
+  const totalMinimo = parseMoedaBR(document.getElementById("riscoTotalMinimo")?.value || localStorage.getItem("jng_crm_risco_total_minimo") || 0);
+
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+
+  const clientes = {};
+
+  dadosOriginais.forEach(r => {
+    const cliente = getCliente(r) || "Sem Nome";
+    const dataTexto = getDataTexto(r);
+    const valor = getValor(r);
+
+    if(!dataTexto) return;
+
+    const data = converterDataBR(dataTexto);
+    if(isNaN(data.getTime())) return;
+
+    if(!clientes[cliente]){
+      clientes[cliente] = {
+        nome: cliente,
+        pedidos: 0,
+        total: 0,
+        ultimaCompra: data
+      };
+    }
+
+    clientes[cliente].pedidos++;
+    clientes[cliente].total += valor;
+
+    if(data > clientes[cliente].ultimaCompra){
+      clientes[cliente].ultimaCompra = data;
+    }
+  });
+
+  const lista = Object.values(clientes)
+    .map(item => {
+      const ultima = new Date(item.ultimaCompra);
+      ultima.setHours(0,0,0,0);
+      const diasSemComprar = Math.max(Math.floor((hoje - ultima) / (1000 * 60 * 60 * 24)),0);
+      const statusTexto = statusClienteRisco(diasSemComprar);
+      return {...item, diasSemComprar, statusTexto};
+    })
+    .filter(item => item.pedidos >= minPedidos)
+    .filter(item => item.diasSemComprar >= diasMinimos)
+    .filter(item => item.total >= totalMinimo)
+    .filter(item => !buscaCliente || normalizar(item.nome).includes(buscaCliente))
+    .filter(item => statusSelecionado === "Todos" || item.statusTexto === statusSelecionado)
+    .sort(compararRisco);
+
+  const maiorDias = lista.length ? Math.max(...lista.map(x => x.diasSemComprar)) : 0;
+  const valorHistorico = lista.reduce((acc,item) => acc + item.total,0);
+  const totalSemVolta = lista.filter(item => item.statusTexto === "Sem Volta").length;
+
+  document.getElementById("riscoTotalClientes").innerText = lista.length;
+  document.getElementById("riscoMaiorDias").innerText = `${maiorDias} dias`;
+  document.getElementById("riscoValorHistorico").innerText = dinheiro(valorHistorico);
+  document.getElementById("riscoSemVolta").innerText = totalSemVolta;
+
+  tbody.innerHTML = "";
+
+  if(lista.length === 0){
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="py-6 text-center text-green-600 font-semibold">
+          Nenhum cliente em risco com os filtros atuais.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  lista.slice(0,50).forEach(item => {
+    const status = badgeStatusRisco(item.statusTexto);
+
+    const key = chaveClienteRisco(item.nome);
+    const contatoSalvo = obterContatoClienteRisco(item.nome);
+    const mensagemSalva = obterMensagemClienteRisco(item.nome);
+
+    tbody.innerHTML += `
+      <tr class="table-hover border-b align-top">
+        <td class="py-4 font-semibold">${escapeHTML(item.nome)}</td>
+        <td class="py-4">${item.pedidos}</td>
+        <td class="py-4">${item.ultimaCompra.toLocaleDateString("pt-BR")}</td>
+        <td class="py-4 font-bold text-red-600">${item.diasSemComprar} dias</td>
+        <td class="py-4 font-bold text-green-600">${dinheiro(item.total)}</td>
+        <td class="py-4">${status}</td>
+        <td class="py-4">
+          <input id="contato_${key}" value="${escapeHTML(contatoSalvo)}" placeholder="Ex: 11999999999" class="border border-gray-300 rounded-xl px-3 py-2 bg-white w-40 text-sm">
+        </td>
+        <td class="py-4">
+          <textarea id="mensagem_${key}" class="border border-gray-300 rounded-xl px-3 py-2 bg-white w-full min-h-[96px] text-sm resize-y">${escapeHTML(mensagemSalva)}</textarea>
+        </td>
+        <td class="py-4">
+          <div class="flex flex-col gap-2 min-w-[140px]">
+            <button onclick='salvarContatoMensagemRisco(${JSON.stringify(item.nome)})' class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-xl text-xs font-semibold">Salvar</button>
+            <button onclick='abrirWhatsAppRisco(${JSON.stringify(item.nome)})' class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-xl text-xs font-semibold">WhatsApp</button>
+            <span id="status_salvo_${key}" class="text-xs text-gray-400 h-4"></span>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
 }
 
 function gerarHistoricoCliente(){
@@ -1871,37 +2467,480 @@ async function exportarPdfPerformance(){
   }
 }
 
+
+function abrirModalVersao(){
+  document.getElementById("modalVersao").classList.add("open");
+}
+
+function fecharModalVersao(){
+  document.getElementById("modalVersao").classList.remove("open");
+}
+
+
+function getAtividadesComerciais(){
+  try{
+    return JSON.parse(localStorage.getItem("jng_atividades_comerciais") || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function setAtividadesComerciais(lista){
+  localStorage.setItem("jng_atividades_comerciais", JSON.stringify(lista || []));
+}
+
+function dataHojeInput(){
+  const hoje = new Date();
+  return `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
+}
+
+function formatarDataInputParaBR(dataIso){
+  if(!dataIso) return "-";
+  const [ano,mes,dia] = String(dataIso).split("-");
+  if(!ano || !mes || !dia) return dataIso;
+  return `${dia}/${mes}/${ano}`;
+}
+
+function inicializarAtividades(){
+  const campoData = document.getElementById("atividadeData");
+  if(campoData && !campoData.value){
+    campoData.value = dataHojeInput();
+  }
+  renderAtividadesComerciais();
+}
+
+function abrirFormularioAtividade(){
+  limparFormularioAtividade();
+  const card = document.getElementById("formularioAtividadeCard");
+  if(card) card.classList.remove("hidden");
+  const titulo = document.getElementById("atividadeTituloFormulario");
+  if(titulo) titulo.innerText = "Registrar Atividade";
+}
+
+function fecharFormularioAtividade(){
+  const card = document.getElementById("formularioAtividadeCard");
+  if(card) card.classList.add("hidden");
+  limparFormularioAtividade();
+}
+
+function limparFormularioAtividade(){
+  document.getElementById("atividadeIdEdicao").value = "";
+  document.getElementById("atividadeData").value = dataHojeInput();
+  document.getElementById("atividadeTipo").value = "Orçamento";
+  document.getElementById("atividadeCliente").value = "";
+  document.getElementById("atividadeFeedback").value = "";
+  document.getElementById("atividadeMensagem").innerText = "";
+}
+
+function formatarDataHoraBR(iso){
+  if(!iso) return "-";
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return "-";
+  return d.toLocaleString("pt-BR", {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
+}
+
+function formatarHoraBR(iso){
+  if(!iso) return "-";
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return "-";
+  return d.toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+}
+
+function escaparHtml(texto){
+  return String(texto || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function salvarAtividadeComercial(){
+  const idEdicao = document.getElementById("atividadeIdEdicao").value;
+  const data = document.getElementById("atividadeData").value;
+  const tipo = document.getElementById("atividadeTipo").value;
+  const cliente = document.getElementById("atividadeCliente").value.trim();
+  const feedback = document.getElementById("atividadeFeedback").value.trim();
+  const msg = document.getElementById("atividadeMensagem");
+
+  if(!data || !tipo || !cliente || !feedback){
+    msg.innerText = "Preencha data, tipo, cliente e feedback.";
+    msg.className = "text-sm mt-3 text-red-500";
+    return;
+  }
+
+  let atividades = getAtividadesComerciais();
+
+  if(idEdicao){
+    atividades = atividades.map(item => item.id === idEdicao ? {...item, data, tipo, cliente, feedback, atualizadoEm:new Date().toISOString()} : item);
+    msg.innerText = "Atividade atualizada com sucesso.";
+  }else{
+    const agora = new Date().toISOString();
+    atividades.push({
+      id: String(Date.now()),
+      data,
+      tipo,
+      cliente,
+      feedback,
+      criadoEm: agora
+    });
+    msg.innerText = "Atividade salva com sucesso.";
+  }
+
+  msg.className = "text-sm mt-3 text-green-600";
+  setAtividadesComerciais(atividades);
+  limparFormularioAtividade();
+  fecharFormularioAtividade();
+  renderAtividadesComerciais();
+}
+
+function editarAtividade(id){
+  const item = getAtividadesComerciais().find(a => a.id === id);
+  if(!item) return;
+  const card = document.getElementById("formularioAtividadeCard");
+  if(card) card.classList.remove("hidden");
+  const titulo = document.getElementById("atividadeTituloFormulario");
+  if(titulo) titulo.innerText = "Editar Atividade";
+  document.getElementById("atividadeIdEdicao").value = item.id;
+  document.getElementById("atividadeData").value = item.data;
+  document.getElementById("atividadeTipo").value = item.tipo;
+  document.getElementById("atividadeCliente").value = item.cliente;
+  document.getElementById("atividadeFeedback").value = item.feedback;
+  document.getElementById("atividadeMensagem").innerText = "Editando atividade selecionada.";
+  document.getElementById("atividadeMensagem").className = "text-sm mt-3 text-yellow-600";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function excluirAtividade(id){
+  const idRef = String(id ?? "").trim();
+
+  if(!idRef){
+    alert("Não foi possível identificar esta atividade para exclusão.");
+    return;
+  }
+
+  const confirmado = window.confirm("Deseja excluir esta atividade?");
+  if(!confirmado) return;
+
+  const atividadesAtuais = getAtividadesComerciais();
+  const atividadesFiltradas = atividadesAtuais.filter(item => String(item.id ?? "").trim() !== idRef);
+
+  setAtividadesComerciais(atividadesFiltradas);
+
+  const campoEdicao = document.getElementById("atividadeIdEdicao");
+  if(campoEdicao && String(campoEdicao.value).trim() === idRef){
+    fecharFormularioAtividade();
+  }
+
+  renderAtividadesComerciais();
+
+  if(atividadesFiltradas.length === atividadesAtuais.length){
+    alert("Atividade não encontrada. Ela pode já ter sido excluída ou o navegador pode estar com cache antigo.");
+  }
+}
+
+
+window.excluirAtividade = excluirAtividade;
+window.editarAtividade = editarAtividade;
+
+function limparFiltrosAtividades(){
+  document.getElementById("filtroAtividadeTipo").value = "Todos";
+  document.getElementById("filtroAtividadeDataInicio").value = "";
+  document.getElementById("filtroAtividadeDataFim").value = "";
+  document.getElementById("filtroAtividadeCliente").value = "";
+  renderAtividadesComerciais();
+}
+
+
+function excluirAtividadeDefinitivo(indiceOriginal){
+  const indice = Number(indiceOriginal);
+  const atividades = getAtividadesComerciais();
+
+  if(!Number.isInteger(indice) || indice < 0 || indice >= atividades.length){
+    alert("Não consegui localizar esta atividade. Atualize a página e tente novamente.");
+    return;
+  }
+
+  const item = atividades[indice];
+  const cliente = item?.cliente ? ` de ${item.cliente}` : "";
+  if(!confirm(`Deseja excluir esta atividade${cliente}?`)) return;
+
+  atividades.splice(indice, 1);
+  setAtividadesComerciais(atividades);
+
+  const campoEdicao = document.getElementById("atividadeIdEdicao");
+  if(campoEdicao && item?.id && String(campoEdicao.value) === String(item.id)){
+    fecharFormularioAtividade();
+  }
+
+  renderAtividadesComerciais();
+}
+
+function editarAtividadeDefinitivo(indiceOriginal){
+  const indice = Number(indiceOriginal);
+  const atividades = getAtividadesComerciais();
+
+  if(!Number.isInteger(indice) || indice < 0 || indice >= atividades.length){
+    alert("Não consegui localizar esta atividade para editar.");
+    return;
+  }
+
+  const item = atividades[indice];
+  const card = document.getElementById("formularioAtividadeCard");
+  if(card) card.classList.remove("hidden");
+  const titulo = document.getElementById("atividadeTituloFormulario");
+  if(titulo) titulo.innerText = "Editar Atividade";
+
+  document.getElementById("atividadeIdEdicao").value = item.id || "";
+  document.getElementById("atividadeData").value = item.data || dataHojeInput();
+  document.getElementById("atividadeTipo").value = item.tipo || "Orçamento";
+  document.getElementById("atividadeCliente").value = item.cliente || "";
+  document.getElementById("atividadeFeedback").value = item.feedback || "";
+  document.getElementById("atividadeMensagem").innerText = "Editando atividade selecionada.";
+  document.getElementById("atividadeMensagem").className = "text-sm mt-3 text-yellow-600";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+window.excluirAtividadeDefinitivo = excluirAtividadeDefinitivo;
+window.editarAtividadeDefinitivo = editarAtividadeDefinitivo;
+
+function renderAtividadesComerciais(){
+  const tbody = document.getElementById("atividadesTabela");
+  if(!tbody) return;
+
+  const tipoFiltro = document.getElementById("filtroAtividadeTipo")?.value || "Todos";
+  const dataInicio = document.getElementById("filtroAtividadeDataInicio")?.value || "";
+  const dataFim = document.getElementById("filtroAtividadeDataFim")?.value || "";
+  const clienteFiltro = normalizar(document.getElementById("filtroAtividadeCliente")?.value || "");
+
+  let atividades = getAtividadesComerciais();
+
+  atividades = atividades.filter(item => {
+    if(tipoFiltro !== "Todos" && item.tipo !== tipoFiltro) return false;
+    if(dataInicio && item.data < dataInicio) return false;
+    if(dataFim && item.data > dataFim) return false;
+    if(clienteFiltro && !normalizar(item.cliente).includes(clienteFiltro)) return false;
+    return true;
+  }).sort((a,b) => String(b.data).localeCompare(String(a.data)) || String(b.criadoEm || "").localeCompare(String(a.criadoEm || "")));
+
+  const todas = getAtividadesComerciais();
+  const hoje = dataHojeInput();
+  const clientesSet = new Set(todas.map(a => normalizar(a.cliente)).filter(Boolean));
+  const porTipo = {};
+  todas.forEach(a => porTipo[a.tipo] = (porTipo[a.tipo] || 0) + 1);
+  const tipoTop = Object.entries(porTipo).sort((a,b)=>b[1]-a[1])[0]?.[0] || "-";
+
+  document.getElementById("ativTotal").innerText = todas.length;
+  document.getElementById("ativHoje").innerText = todas.filter(a => a.data === hoje).length;
+  document.getElementById("ativClientes").innerText = clientesSet.size;
+  document.getElementById("ativTipoTop").innerText = tipoTop;
+
+  tbody.innerHTML = "";
+
+  if(atividades.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-400">Nenhuma atividade encontrada.</td></tr>`;
+    return;
+  }
+
+  atividades.forEach(item => {
+    tbody.innerHTML += `
+      <tr class="border-b table-hover align-middle text-center">
+        <td class="py-4 font-semibold">${formatarDataInputParaBR(item.data)}</td>
+        <td class="font-semibold text-gray-600">${formatarHoraBR(item.criadoEm)}</td>
+        <td><span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold">${escaparHtml(item.tipo)}</span></td>
+        <td class="font-semibold text-gray-700">${escaparHtml(item.cliente)}</td>
+        <td class="text-gray-600 max-w-[520px] whitespace-pre-wrap text-left">${escaparHtml(item.feedback)}</td>
+        <td class="text-xs text-gray-500">${formatarDataHoraBR(item.atualizadoEm)}</td>
+        <td class="min-w-[170px]">
+                    <button type="button" onclick="editarAtividadeDefinitivo(${indiceOriginal})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-bold mr-2">Editar</button>
+          <button type="button" onclick="excluirAtividadeDefinitivo(${indiceOriginal})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-bold">Excluir</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+document.addEventListener("click", function(e){
+  const botaoAtividade = e.target.closest("[data-atividade-action]");
+  if(!botaoAtividade) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const acao = botaoAtividade.getAttribute("data-atividade-action");
+  const id = botaoAtividade.getAttribute("data-atividade-id");
+
+  if(acao === "editar"){
+    editarAtividade(id);
+    return;
+  }
+
+  if(acao === "excluir"){
+    excluirAtividade(id);
+  }
+});
+
+
+document.addEventListener("click", function(e){
+  const btn = e.target.closest("button");
+  if(!btn) return;
+  if(btn.textContent && btn.textContent.trim() === "Excluir" && btn.closest("#atividadesTabela")){
+    const tr = btn.closest("tr");
+    const botoes = Array.from(document.querySelectorAll("#atividadesTabela tr"));
+    // Prefer onclick already attached; fallback only for old cached/generated rows.
+    if(!btn.getAttribute("onclick")){
+      const dataIndex = btn.getAttribute("data-atividade-index");
+      if(dataIndex !== null){
+        e.preventDefault();
+        e.stopPropagation();
+        excluirAtividadeDefinitivo(dataIndex);
+      }
+    }
+  }
+}, true);
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape" && document.getElementById("modalVersao")){
+    fecharModalVersao();
+  }
+});
+
+
+function inicializarIdentidadeCRM(){
+  const tituloSalvo = localStorage.getItem("jng_crm_titulo") || "JNG CRM";
+  const vendedorSalvo = localStorage.getItem("jng_crm_vendedor") || "";
+
+  const titulo = document.getElementById("tituloCRM");
+  const vendedor = document.getElementById("nomeVendedorCRM");
+
+  if(titulo) titulo.innerText = tituloSalvo;
+  if(vendedor) vendedor.value = vendedorSalvo;
+
+  atualizarSeparadorVendedor();
+}
+
+function salvarIdentidadeCRM(){
+  const titulo = document.getElementById("tituloCRM");
+  const vendedor = document.getElementById("nomeVendedorCRM");
+
+  const tituloValor = (titulo?.innerText || "JNG CRM").trim() || "JNG CRM";
+  const vendedorValor = (vendedor?.value || "").trim();
+
+  localStorage.setItem("jng_crm_titulo", tituloValor);
+  localStorage.setItem("jng_crm_vendedor", vendedorValor);
+
+  atualizarSeparadorVendedor();
+}
+
+function atualizarSeparadorVendedor(){
+  const vendedor = document.getElementById("nomeVendedorCRM");
+  const separador = document.getElementById("separadorVendedor");
+  if(!separador || !vendedor) return;
+  if((vendedor.value || "").trim()){
+    separador.classList.remove("hidden");
+  }else{
+    separador.classList.add("hidden");
+  }
+}
+
+function atualizarBotaoSidebar(){
+  const sidebar = document.getElementById("sidebar");
+  const arrow = document.getElementById("toggleArrow");
+  if(!sidebar || !arrow) return;
+  arrow.innerText = sidebar.classList.contains("collapsed") ? "▶" : "◀";
+}
+
+function toggleSidebar(){
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("collapsed");
+  document.body.classList.toggle("sidebar-collapsed", sidebar.classList.contains("collapsed"));
+  localStorage.setItem("jng_sidebar_collapsed", sidebar.classList.contains("collapsed") ? "1" : "0");
+  atualizarBotaoSidebar();
+}
+
+function inicializarSidebar(){
+  const sidebar = document.getElementById("sidebar");
+  const recolhido = localStorage.getItem("jng_sidebar_collapsed") === "1";
+  if(recolhido){
+    sidebar.classList.add("collapsed");
+    document.body.classList.add("sidebar-collapsed");
+  }
+  atualizarBotaoSidebar();
+  setMenuAtivo("navCRM");
+}
+
+function setMenuAtivo(id){
+  document.querySelectorAll(".side-btn").forEach(btn => btn.classList.remove("active"));
+  const ativo = document.getElementById(id);
+  if(ativo) ativo.classList.add("active");
+}
+
 function abrirDashboard(){
+  setMenuAtivo("navCRM");
   document.getElementById("dashboardCRM").classList.remove("hidden");
   document.getElementById("painelMetas").classList.add("hidden");
   document.getElementById("painelPerformance").classList.add("hidden");
   document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
+  document.getElementById("painelAtividades").classList.add("hidden");
 }
 
 function abrirMetas(){
+  setMenuAtivo("navMetas");
   document.getElementById("dashboardCRM").classList.add("hidden");
   document.getElementById("painelMetas").classList.remove("hidden");
   document.getElementById("painelPerformance").classList.add("hidden");
   document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
+  document.getElementById("painelAtividades").classList.add("hidden");
   gerarPainelMetas();
 }
 
 function abrirPerformance(){
+  setMenuAtivo("navPerf");
   document.getElementById("dashboardCRM").classList.add("hidden");
   document.getElementById("painelMetas").classList.add("hidden");
   document.getElementById("painelPerformance").classList.remove("hidden");
   document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
+  document.getElementById("painelAtividades").classList.add("hidden");
   popularPeriodoPerformance();
   popularSemanasPerformance();
   popularDiasPerformance();
   gerarPerformance();
 }
 
+function abrirRisco(){
+  setMenuAtivo("navRisco");
+  document.getElementById("dashboardCRM").classList.add("hidden");
+  document.getElementById("painelMetas").classList.add("hidden");
+  document.getElementById("painelPerformance").classList.add("hidden");
+  document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.remove("hidden");
+  document.getElementById("painelAtividades").classList.add("hidden");
+  carregarFiltrosRisco();
+  gerarClientesEmRisco();
+}
+
+function abrirAtividades(){
+  setMenuAtivo("navAtiv");
+  document.getElementById("dashboardCRM").classList.add("hidden");
+  document.getElementById("painelMetas").classList.add("hidden");
+  document.getElementById("painelPerformance").classList.add("hidden");
+  document.getElementById("painelConfig").classList.add("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
+  document.getElementById("painelAtividades").classList.remove("hidden");
+  inicializarAtividades();
+}
+
 function abrirConfig(){
+  setMenuAtivo("navConfig");
   document.getElementById("dashboardCRM").classList.add("hidden");
   document.getElementById("painelMetas").classList.add("hidden");
   document.getElementById("painelPerformance").classList.add("hidden");
   document.getElementById("painelConfig").classList.remove("hidden");
+  document.getElementById("painelRisco").classList.add("hidden");
+  document.getElementById("painelAtividades").classList.add("hidden");
   preencherTelaConfig();
 }
 
@@ -1913,10 +2952,12 @@ document.getElementById("pesquisa").addEventListener("input",function(){
   );
 });
 
+inicializarSidebar();
+inicializarIdentidadeCRM();
 preencherTelaConfig();
 carregar();
 
-setInterval(carregar,30000);
+// Atualização automática removida: os dados atualizam ao abrir/recarregar a página ou trocar filtros.
 </script>
 
 </body>
