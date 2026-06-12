@@ -71,8 +71,12 @@
 <body>
 
 <div id="sidebar" class="sidebar">
-  <div class="sidebar-brand justify-center">
-    <div class="brand-icon">J</div>
+  <div class="sidebar-brand">
+    <div class="brand-icon" style="background:rgba(255,255,255,.10);box-shadow:none;">👤</div>
+    <div class="brand-text">
+      <strong id="sidebarUserName">Vendedor</strong>
+      <span>CRM COMERCIAL • v1.8.12</span>
+    </div>
   </div>
 
   <button id="btnToggleSidebar" onclick="toggleSidebar()" class="sidebar-toggle" title="Recolher/expandir menu">
@@ -97,7 +101,7 @@
     <div class="flex justify-between items-start gap-4 mb-5">
       <div>
         <h2 class="text-2xl font-bold text-gray-800">Novidades da versão</h2>
-        <p class="text-gray-500 mt-1">JNG CRM • v1.8.11 • Build 2026.06.12</p>
+        <p class="text-gray-500 mt-1">JNG CRM • v1.8.12 • Build 2026.06.12</p>
       </div>
       <button onclick="fecharModalVersao()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold">X</button>
     </div>
@@ -140,7 +144,7 @@
       <p class="text-gray-500 mt-2">Dashboard Comercial <span id="separadorVendedor" class="hidden">•</span> <input id="nomeVendedorCRM" oninput="salvarIdentidadeCRM()" class="seller-name-input" placeholder="Nome do vendedor" title="Digite o nome do vendedor"></p>
     </div>
     <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
-      <strong>📋 Versão 1.8.11</strong>
+      <strong>📋 Versão 1.8.12</strong>
       <span>Build 2026.06.12</span>
     </button>
   </div>
@@ -2880,7 +2884,7 @@ carregar();
 
 // Atualização automática removida: os dados atualizam ao abrir/recarregar a página ou trocar filtros.
 
-/* ===== PATCH v1.8.11 - Risco sem WhatsApp + Atividades com ocultar ===== */
+/* ===== PATCH v1.8.12 - Risco sem WhatsApp + Atividades com ocultar ===== */
 
 function getAtividadesComerciais(){
   try{
@@ -3217,6 +3221,49 @@ function ordenarRisco(campo){
 
   gerarClientesEmRisco();
 }
+
+
+/* ===== PATCH v1.8.12 - Nome do vendedor na Sidebar ===== */
+function atualizarNomeSidebar(){
+  const campo = document.getElementById("nomeVendedorCRM");
+  const el = document.getElementById("sidebarUserName");
+  const nome = (campo?.value || localStorage.getItem("jng_crm_nome_vendedor") || "Vendedor").trim();
+  if(el) el.textContent = nome || "Vendedor";
+}
+
+const salvarIdentidadeCRMOriginal_v1812 = typeof salvarIdentidadeCRM === "function" ? salvarIdentidadeCRM : null;
+function salvarIdentidadeCRM(){
+  const titulo = document.getElementById("tituloCRM")?.innerText || "JNG CRM";
+  const vendedor = document.getElementById("nomeVendedorCRM")?.value || "";
+  localStorage.setItem("jng_crm_titulo", titulo);
+  localStorage.setItem("jng_crm_nome_vendedor", vendedor);
+  const sep = document.getElementById("separadorVendedor");
+  if(sep){
+    if(vendedor.trim()) sep.classList.remove("hidden");
+    else sep.classList.add("hidden");
+  }
+  atualizarNomeSidebar();
+}
+
+const carregarIdentidadeCRMOriginal_v1812 = typeof carregarIdentidadeCRM === "function" ? carregarIdentidadeCRM : null;
+function carregarIdentidadeCRM(){
+  const titulo = localStorage.getItem("jng_crm_titulo") || "JNG CRM";
+  const vendedor = localStorage.getItem("jng_crm_nome_vendedor") || "";
+  const tituloEl = document.getElementById("tituloCRM");
+  const vendedorEl = document.getElementById("nomeVendedorCRM");
+  const sep = document.getElementById("separadorVendedor");
+
+  if(tituloEl) tituloEl.innerText = titulo;
+  if(vendedorEl) vendedorEl.value = vendedor;
+  if(sep){
+    if(vendedor.trim()) sep.classList.remove("hidden");
+    else sep.classList.add("hidden");
+  }
+  atualizarNomeSidebar();
+}
+
+document.addEventListener("DOMContentLoaded", atualizarNomeSidebar);
+setTimeout(atualizarNomeSidebar, 300);
 
 </script>
 
