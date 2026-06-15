@@ -75,7 +75,7 @@
     <div class="brand-icon" style="background:rgba(255,255,255,.10);box-shadow:none;">👤</div>
     <div class="brand-text">
       <strong id="sidebarUserName">Vendedor</strong>
-      <span>CRM COMERCIAL • v1.8.12</span>
+      <span>CRM COMERCIAL • v1.9.2</span>
     </div>
   </div>
 
@@ -89,6 +89,7 @@
     <button id="navPerf" onclick="abrirPerformance()" class="side-btn"><span class="side-ico">📈</span><span class="side-label">Performance</span></button>
     <button id="navRisco" onclick="abrirRisco()" class="side-btn"><span class="side-ico">🚨</span><span class="side-label">Risco</span></button>
     <button id="navAtiv" onclick="abrirAtividades()" class="side-btn"><span class="side-ico">📋</span><span class="side-label">Atividades</span></button>
+    <button id="navStatus" onclick="abrirStatus()" class="side-btn"><span class="side-ico">📦</span><span class="side-label">Status</span></button>
   </div>
 
   <div class="sidebar-config-area">
@@ -101,7 +102,7 @@
     <div class="flex justify-between items-start gap-4 mb-5">
       <div>
         <h2 class="text-2xl font-bold text-gray-800">Novidades da versão</h2>
-        <p class="text-gray-500 mt-1">JNG CRM • v1.8.12 • Build 2026.06.12</p>
+        <p class="text-gray-500 mt-1">JNG CRM • v1.9.2 • Build 2026.06.12</p>
       </div>
       <button onclick="fecharModalVersao()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold">X</button>
     </div>
@@ -144,7 +145,7 @@
       <p class="text-gray-500 mt-2">Dashboard Comercial <span id="separadorVendedor" class="hidden">•</span> <input id="nomeVendedorCRM" oninput="salvarIdentidadeCRM()" class="seller-name-input" placeholder="Nome do vendedor" title="Digite o nome do vendedor"></p>
     </div>
     <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
-      <strong>📋 Versão 1.8.12</strong>
+      <strong>📋 Versão 1.9.2</strong>
       <span>Build 2026.06.12</span>
     </button>
   </div>
@@ -497,6 +498,143 @@
     </div>
   </div>
 </div>
+
+
+
+
+<div id="painelStatus" class="hidden">
+  <div class="flex justify-between items-center mb-10 flex-wrap gap-4">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Status dos Pedidos</h1>
+      <p class="text-gray-500 mt-2">Consulta rápida usando a mesma planilha configurada na aba CONFIG.</p>
+    </div>
+  </div>
+
+  <div id="statusPrimeiroAcesso" class="card mb-8 border-l-4 border-blue-600">
+    <div class="flex justify-between items-start gap-4 flex-wrap mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Configuração da aba Status</h2>
+        <p class="text-gray-500 mt-1">Configure quais colunas da sua planilha representam cada informação do pedido.</p>
+      </div>
+      <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-bold text-sm">Individual por vendedor</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
+      <div class="filter-field">
+        <label>Coluna Integrador</label>
+        <input id="statusConfigColIntegrador" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="A">
+      </div>
+      <div class="filter-field">
+        <label>Coluna Cliente Final</label>
+        <input id="statusConfigColClienteFinal" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="C">
+      </div>
+      <div class="filter-field">
+        <label>Coluna Número do Pedido</label>
+        <input id="statusConfigColNumeroPedido" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="D">
+      </div>
+      <div class="filter-field">
+        <label>Coluna Status do Pedido</label>
+        <input id="statusConfigColStatus" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="K">
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-2xl p-5 mb-6">
+      <p class="text-gray-600 text-sm">
+        Padrão sugerido: <b>A</b> Integrador • <b>C</b> Cliente Final • <b>D</b> Número do Pedido • <b>K</b> Status do Pedido.
+        Se o Status estiver vazio, o CRM exibirá <b>Sem status informado</b>.
+      </p>
+    </div>
+
+    <div class="flex gap-3 flex-wrap">
+      <button type="button" onclick="salvarConfigStatusPedidos()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow">
+        Salvar e Carregar Status
+      </button>
+      <button type="button" onclick="preencherPadraoStatusPedidos()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold">
+        Usar padrão A/C/D/K
+      </button>
+    </div>
+  </div>
+
+  <div id="statusConteudo" class="hidden">
+    <div class="card mb-8">
+      <div class="flex justify-between items-center mb-5 flex-wrap gap-3">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-700">Filtros de Status</h2>
+          <p id="statusMapeamentoAtual" class="text-gray-500 mt-1 text-sm">Mapeamento atual: -</p>
+        </div>
+        <button type="button" onclick="editarConfigStatusPedidos()" class="bg-gray-900 hover:bg-black text-white px-5 py-3 rounded-xl font-semibold">
+          Editar colunas
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Buscar</label>
+          <input id="statusBusca" oninput="renderStatusPedidos()" type="text" placeholder="Integrador, cliente ou pedido" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Status</label>
+          <select id="statusFiltroStatus" onchange="renderStatusPedidos()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+            <option value="Todos">Todos</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Integrador</label>
+          <select id="statusFiltroIntegrador" onchange="renderStatusPedidos()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+            <option value="Todos">Todos</option>
+          </select>
+        </div>
+
+        <button type="button" onclick="limparFiltrosStatus()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-semibold">
+          Limpar filtros
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="card">
+        <p class="text-gray-500 mb-2">Total de Pedidos</p>
+        <h2 id="statusTotalPedidos" class="text-3xl font-bold text-blue-600">0</h2>
+      </div>
+      <div class="card">
+        <p class="text-gray-500 mb-2">Status Diferentes</p>
+        <h2 id="statusQtdStatus" class="text-3xl font-bold text-purple-600">0</h2>
+      </div>
+      <div class="card">
+        <p class="text-gray-500 mb-2">Sem Status</p>
+        <h2 id="statusSemStatus" class="text-3xl font-bold text-orange-500">0</h2>
+      </div>
+      <div class="card">
+        <p class="text-gray-500 mb-2">Integradores</p>
+        <h2 id="statusQtdIntegradores" class="text-3xl font-bold text-green-600">0</h2>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+        <h2 class="text-2xl font-bold text-gray-700">Lista de Pedidos</h2>
+        <p class="text-sm text-gray-500">Os dados vêm da planilha configurada na aba CONFIG.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b text-left text-gray-500">
+              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('integrador')">Integrador <span id="sortStatus_integrador">↕</span></th>
+              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('clienteFinal')">Cliente Final <span id="sortStatus_clienteFinal">↕</span></th>
+              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('numeroPedido')">Número do Pedido <span id="sortStatus_numeroPedido">↕</span></th>
+              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('status')">Status do Pedido <span id="sortStatus_status">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="statusPedidosTabela"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div id="modalPerdidos" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
   <div class="bg-white rounded-2xl p-8 w-[1000px] max-h-[80vh] overflow-auto">
@@ -2884,7 +3022,7 @@ carregar();
 
 // Atualização automática removida: os dados atualizam ao abrir/recarregar a página ou trocar filtros.
 
-/* ===== PATCH v1.8.12 - Risco sem WhatsApp + Atividades com ocultar ===== */
+/* ===== PATCH v1.9.2 - Risco sem WhatsApp + Atividades com ocultar ===== */
 
 function getAtividadesComerciais(){
   try{
@@ -3223,7 +3361,7 @@ function ordenarRisco(campo){
 }
 
 
-/* ===== PATCH v1.8.12 - Nome do vendedor na Sidebar ===== */
+/* ===== PATCH v1.9.2 - Nome do vendedor na Sidebar ===== */
 function atualizarNomeSidebar(){
   const campo = document.getElementById("nomeVendedorCRM");
   const el = document.getElementById("sidebarUserName");
@@ -3264,6 +3402,396 @@ function carregarIdentidadeCRM(){
 
 document.addEventListener("DOMContentLoaded", atualizarNomeSidebar);
 setTimeout(atualizarNomeSidebar, 300);
+
+
+/* ===== PATCH v1.9.2 - Aba Status dos Pedidos ===== */
+
+function getStatusPedidoRow(row){
+  const integrador = getCelula(row, 0);
+  const clienteFinal = getCelula(row, 2);
+  const numeroPedido = getCelula(row, 3);
+  const statusBruto = getCelula(row, 10);
+  const status = String(statusBruto || "").trim() || "Sem status informado";
+  return {integrador:String(integrador||"").trim(), clienteFinal:String(clienteFinal||"").trim(), numeroPedido:String(numeroPedido||"").trim(), status};
+}
+
+function obterListaStatusPedidos(){
+  return (dadosOriginais || []).map(getStatusPedidoRow).filter(item => item.integrador || item.clienteFinal || item.numeroPedido || item.status !== "Sem status informado");
+}
+
+function popularFiltrosStatus(){
+  const selectStatus = document.getElementById("statusFiltroStatus");
+  const selectIntegrador = document.getElementById("statusFiltroIntegrador");
+  if(!selectStatus || !selectIntegrador) return;
+  const statusAtual = selectStatus.value || "Todos";
+  const integradorAtual = selectIntegrador.value || "Todos";
+  const lista = obterListaStatusPedidos();
+  const statusSet = new Set();
+  const integradorSet = new Set();
+  lista.forEach(item => { if(item.status) statusSet.add(item.status); if(item.integrador) integradorSet.add(item.integrador); });
+  selectStatus.innerHTML = `<option value="Todos">Todos</option>`;
+  [...statusSet].sort((a,b)=>a.localeCompare(b)).forEach(st => { selectStatus.innerHTML += `<option value="${String(st).replace(/"/g,'&quot;')}">${st}</option>`; });
+  selectIntegrador.innerHTML = `<option value="Todos">Todos</option>`;
+  [...integradorSet].sort((a,b)=>a.localeCompare(b)).forEach(nome => { selectIntegrador.innerHTML += `<option value="${String(nome).replace(/"/g,'&quot;')}">${nome}</option>`; });
+  if([...selectStatus.options].some(o => o.value === statusAtual)) selectStatus.value = statusAtual;
+  if([...selectIntegrador.options].some(o => o.value === integradorAtual)) selectIntegrador.value = integradorAtual;
+}
+
+function getStatusClass(status){
+  const s = normalizar(status);
+  if(s.includes("sem status")) return "bg-gray-100 text-gray-700";
+  if(s.includes("fatur") || s.includes("conclu") || s.includes("entreg")) return "bg-green-100 text-green-700";
+  if(s.includes("cancel")) return "bg-red-100 text-red-700";
+  if(s.includes("pend") || s.includes("aguard") || s.includes("analise")) return "bg-yellow-100 text-yellow-700";
+  if(s.includes("separ") || s.includes("exped") || s.includes("transp")) return "bg-blue-100 text-blue-700";
+  return "bg-purple-100 text-purple-700";
+}
+
+function renderStatusPedidos(){
+  const tabela = document.getElementById("statusPedidosTabela");
+  if(!tabela) return;
+  popularFiltrosStatus();
+  const busca = normalizar(document.getElementById("statusBusca")?.value || "");
+  const statusFiltro = document.getElementById("statusFiltroStatus")?.value || "Todos";
+  const integradorFiltro = document.getElementById("statusFiltroIntegrador")?.value || "Todos";
+  let lista = obterListaStatusPedidos().filter(item => {
+    const textoBusca = normalizar(`${item.integrador} ${item.clienteFinal} ${item.numeroPedido} ${item.status}`);
+    if(busca && !textoBusca.includes(busca)) return false;
+    if(statusFiltro !== "Todos" && item.status !== statusFiltro) return false;
+    if(integradorFiltro !== "Todos" && item.integrador !== integradorFiltro) return false;
+    return true;
+  });
+  if(window.statusSort && window.statusSort.campo){
+    const {campo, dir} = window.statusSort;
+    lista.sort((a,b)=> dir * String(a[campo] || "").localeCompare(String(b[campo] || ""), "pt-BR", {numeric:true}));
+  }
+  const todos = obterListaStatusPedidos();
+  const statusDiferentes = new Set(todos.map(i=>i.status).filter(Boolean));
+  const integradores = new Set(todos.map(i=>i.integrador).filter(Boolean));
+  const semStatus = todos.filter(i=>i.status === "Sem status informado").length;
+  if(document.getElementById("statusTotalPedidos")) document.getElementById("statusTotalPedidos").innerText = lista.length;
+  if(document.getElementById("statusQtdStatus")) document.getElementById("statusQtdStatus").innerText = statusDiferentes.size;
+  if(document.getElementById("statusSemStatus")) document.getElementById("statusSemStatus").innerText = semStatus;
+  if(document.getElementById("statusQtdIntegradores")) document.getElementById("statusQtdIntegradores").innerText = integradores.size;
+  tabela.innerHTML = "";
+  if(lista.length === 0){
+    tabela.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-400">Nenhum pedido encontrado.</td></tr>`;
+    return;
+  }
+  lista.forEach(item => {
+    tabela.innerHTML += `<tr class="border-b table-hover"><td class="py-4 font-semibold">${item.integrador || "-"}</td><td class="py-4">${item.clienteFinal || "-"}</td><td class="py-4 font-bold text-blue-600">${item.numeroPedido || "-"}</td><td class="py-4"><span class="${getStatusClass(item.status)} px-3 py-1 rounded-full font-bold text-xs">${item.status}</span></td></tr>`;
+  });
+}
+
+function ordenarStatus(campo){
+  if(!window.statusSort || window.statusSort.campo !== campo){ window.statusSort = {campo, dir: 1}; } else { window.statusSort.dir = window.statusSort.dir * -1; }
+  ["integrador","clienteFinal","numeroPedido","status"].forEach(c=>{ const el = document.getElementById(`sortStatus_${c}`); if(el) el.innerText = "↕"; });
+  const el = document.getElementById(`sortStatus_${campo}`);
+  if(el) el.innerText = window.statusSort.dir === 1 ? "↑" : "↓";
+  renderStatusPedidos();
+}
+
+function limparFiltrosStatus(){
+  const busca = document.getElementById("statusBusca");
+  const status = document.getElementById("statusFiltroStatus");
+  const integrador = document.getElementById("statusFiltroIntegrador");
+  if(busca) busca.value = "";
+  if(status) status.value = "Todos";
+  if(integrador) integrador.value = "Todos";
+  renderStatusPedidos();
+}
+
+function abrirStatus(){
+  const ids = ["dashboardCRM","painelMetas","painelPerformance","painelConfig","painelRisco","painelAtividades","painelStatus"];
+  ids.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add("hidden"); });
+  const painel = document.getElementById("painelStatus");
+  if(painel) painel.classList.remove("hidden");
+  ["navCRM","navMetas","navPerf","navConfig","navRisco","navAtiv","navStatus"].forEach(id=>{ const el = document.getElementById(id); if(el) el.classList.remove("active"); });
+  const nav = document.getElementById("navStatus");
+  if(nav) nav.classList.add("active");
+  popularFiltrosStatus();
+  renderStatusPedidos();
+}
+
+const carregarOriginal_v190 = typeof carregar === "function" ? carregar : null;
+if(carregarOriginal_v190){
+  carregar = async function(){
+    await carregarOriginal_v190();
+    popularFiltrosStatus();
+    renderStatusPedidos();
+  }
+}
+
+
+
+/* ===== PATCH v1.9.2 - Aba Status sem travamento ===== */
+
+const STATUS_CONFIG_PADRAO = {
+  colunaIntegrador:"A",
+  colunaClienteFinal:"C",
+  colunaNumeroPedido:"D",
+  colunaStatus:"K"
+};
+
+let statusConfigPedidos = carregarConfigStatusPedidos();
+let statusFiltrosPopulados = false;
+
+function carregarConfigStatusPedidos(){
+  try{
+    const salvo = JSON.parse(localStorage.getItem("jng_crm_status_config") || "{}");
+    return {...STATUS_CONFIG_PADRAO, ...salvo};
+  }catch(e){
+    return {...STATUS_CONFIG_PADRAO};
+  }
+}
+
+function statusConfigFoiSalva(){
+  return localStorage.getItem("jng_crm_status_config") !== null;
+}
+
+function preencherTelaConfigStatusPedidos(){
+  const c1 = document.getElementById("statusConfigColIntegrador");
+  const c2 = document.getElementById("statusConfigColClienteFinal");
+  const c3 = document.getElementById("statusConfigColNumeroPedido");
+  const c4 = document.getElementById("statusConfigColStatus");
+
+  if(c1) c1.value = statusConfigPedidos.colunaIntegrador || "A";
+  if(c2) c2.value = statusConfigPedidos.colunaClienteFinal || "C";
+  if(c3) c3.value = statusConfigPedidos.colunaNumeroPedido || "D";
+  if(c4) c4.value = statusConfigPedidos.colunaStatus || "K";
+}
+
+function atualizarMapeamentoStatus(){
+  const el = document.getElementById("statusMapeamentoAtual");
+  if(!el) return;
+  el.innerText = `Mapeamento atual: ${statusConfigPedidos.colunaIntegrador} Integrador • ${statusConfigPedidos.colunaClienteFinal} Cliente Final • ${statusConfigPedidos.colunaNumeroPedido} Pedido • ${statusConfigPedidos.colunaStatus} Status`;
+}
+
+function salvarConfigStatusPedidos(){
+  statusConfigPedidos = {
+    colunaIntegrador:(document.getElementById("statusConfigColIntegrador")?.value || "A").trim().toUpperCase() || "A",
+    colunaClienteFinal:(document.getElementById("statusConfigColClienteFinal")?.value || "C").trim().toUpperCase() || "C",
+    colunaNumeroPedido:(document.getElementById("statusConfigColNumeroPedido")?.value || "D").trim().toUpperCase() || "D",
+    colunaStatus:(document.getElementById("statusConfigColStatus")?.value || "K").trim().toUpperCase() || "K"
+  };
+
+  localStorage.setItem("jng_crm_status_config", JSON.stringify(statusConfigPedidos));
+  statusFiltrosPopulados = false;
+  preencherTelaConfigStatusPedidos();
+  mostrarConteudoStatus();
+  popularFiltrosStatus(true);
+  renderStatusPedidos();
+}
+
+function preencherPadraoStatusPedidos(){
+  statusConfigPedidos = {...STATUS_CONFIG_PADRAO};
+  preencherTelaConfigStatusPedidos();
+}
+
+function editarConfigStatusPedidos(){
+  preencherTelaConfigStatusPedidos();
+  const primeiro = document.getElementById("statusPrimeiroAcesso");
+  const conteudo = document.getElementById("statusConteudo");
+  if(primeiro) primeiro.classList.remove("hidden");
+  if(conteudo) conteudo.classList.add("hidden");
+}
+
+function mostrarConteudoStatus(){
+  const primeiro = document.getElementById("statusPrimeiroAcesso");
+  const conteudo = document.getElementById("statusConteudo");
+  if(primeiro) primeiro.classList.add("hidden");
+  if(conteudo) conteudo.classList.remove("hidden");
+  atualizarMapeamentoStatus();
+}
+
+function getStatusPedidoRow(row){
+  const integrador = getCelula(row, colunaParaIndice(statusConfigPedidos.colunaIntegrador || "A"));
+  const clienteFinal = getCelula(row, colunaParaIndice(statusConfigPedidos.colunaClienteFinal || "C"));
+  const numeroPedido = getCelula(row, colunaParaIndice(statusConfigPedidos.colunaNumeroPedido || "D"));
+  const statusBruto = getCelula(row, colunaParaIndice(statusConfigPedidos.colunaStatus || "K"));
+  const status = String(statusBruto || "").trim() || "Sem status informado";
+
+  return {
+    integrador:String(integrador || "").trim(),
+    clienteFinal:String(clienteFinal || "").trim(),
+    numeroPedido:String(numeroPedido || "").trim(),
+    status
+  };
+}
+
+function obterListaStatusPedidos(){
+  return (dadosOriginais || [])
+    .map(getStatusPedidoRow)
+    .filter(item => item.integrador || item.clienteFinal || item.numeroPedido || item.status !== "Sem status informado");
+}
+
+function popularFiltrosStatus(forcar=false){
+  const selectStatus = document.getElementById("statusFiltroStatus");
+  const selectIntegrador = document.getElementById("statusFiltroIntegrador");
+  if(!selectStatus || !selectIntegrador) return;
+  if(statusFiltrosPopulados && !forcar) return;
+
+  const statusAtual = selectStatus.value || "Todos";
+  const integradorAtual = selectIntegrador.value || "Todos";
+
+  const lista = obterListaStatusPedidos();
+  const statusSet = new Set();
+  const integradorSet = new Set();
+
+  lista.forEach(item => {
+    if(item.status) statusSet.add(item.status);
+    if(item.integrador) integradorSet.add(item.integrador);
+  });
+
+  selectStatus.innerHTML = `<option value="Todos">Todos</option>`;
+  [...statusSet].sort((a,b)=>a.localeCompare(b)).forEach(st => {
+    const opt = document.createElement("option");
+    opt.value = st;
+    opt.textContent = st;
+    selectStatus.appendChild(opt);
+  });
+
+  selectIntegrador.innerHTML = `<option value="Todos">Todos</option>`;
+  [...integradorSet].sort((a,b)=>a.localeCompare(b)).forEach(nome => {
+    const opt = document.createElement("option");
+    opt.value = nome;
+    opt.textContent = nome;
+    selectIntegrador.appendChild(opt);
+  });
+
+  if([...selectStatus.options].some(o => o.value === statusAtual)) selectStatus.value = statusAtual;
+  if([...selectIntegrador.options].some(o => o.value === integradorAtual)) selectIntegrador.value = integradorAtual;
+
+  statusFiltrosPopulados = true;
+}
+
+function getStatusClass(status){
+  const s = normalizar(status);
+  if(s.includes("sem status")) return "bg-gray-100 text-gray-700";
+  if(s.includes("fatur") || s.includes("conclu") || s.includes("entreg")) return "bg-green-100 text-green-700";
+  if(s.includes("cancel")) return "bg-red-100 text-red-700";
+  if(s.includes("pend") || s.includes("aguard") || s.includes("analise")) return "bg-yellow-100 text-yellow-700";
+  if(s.includes("separ") || s.includes("exped") || s.includes("transp")) return "bg-blue-100 text-blue-700";
+  return "bg-purple-100 text-purple-700";
+}
+
+function renderStatusPedidos(){
+  const tabela = document.getElementById("statusPedidosTabela");
+  if(!tabela) return;
+
+  const busca = normalizar(document.getElementById("statusBusca")?.value || "");
+  const statusFiltro = document.getElementById("statusFiltroStatus")?.value || "Todos";
+  const integradorFiltro = document.getElementById("statusFiltroIntegrador")?.value || "Todos";
+
+  let lista = obterListaStatusPedidos().filter(item => {
+    const textoBusca = normalizar(`${item.integrador} ${item.clienteFinal} ${item.numeroPedido} ${item.status}`);
+    if(busca && !textoBusca.includes(busca)) return false;
+    if(statusFiltro !== "Todos" && item.status !== statusFiltro) return false;
+    if(integradorFiltro !== "Todos" && item.integrador !== integradorFiltro) return false;
+    return true;
+  });
+
+  if(window.statusSort && window.statusSort.campo){
+    const {campo, dir} = window.statusSort;
+    lista.sort((a,b)=> dir * String(a[campo] || "").localeCompare(String(b[campo] || ""), "pt-BR", {numeric:true}));
+  }
+
+  const todos = obterListaStatusPedidos();
+  const statusDiferentes = new Set(todos.map(i=>i.status).filter(Boolean));
+  const integradores = new Set(todos.map(i=>i.integrador).filter(Boolean));
+  const semStatus = todos.filter(i=>i.status === "Sem status informado").length;
+
+  const totalEl = document.getElementById("statusTotalPedidos");
+  const qtdStatusEl = document.getElementById("statusQtdStatus");
+  const semStatusEl = document.getElementById("statusSemStatus");
+  const qtdIntegradoresEl = document.getElementById("statusQtdIntegradores");
+
+  if(totalEl) totalEl.innerText = lista.length;
+  if(qtdStatusEl) qtdStatusEl.innerText = statusDiferentes.size;
+  if(semStatusEl) semStatusEl.innerText = semStatus;
+  if(qtdIntegradoresEl) qtdIntegradoresEl.innerText = integradores.size;
+
+  tabela.innerHTML = "";
+
+  if(lista.length === 0){
+    tabela.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-400">Nenhum pedido encontrado.</td></tr>`;
+    return;
+  }
+
+  lista.forEach(item => {
+    const tr = document.createElement("tr");
+    tr.className = "border-b table-hover";
+    tr.innerHTML = `
+      <td class="py-4 font-semibold">${item.integrador || "-"}</td>
+      <td class="py-4">${item.clienteFinal || "-"}</td>
+      <td class="py-4 font-bold text-blue-600">${item.numeroPedido || "-"}</td>
+      <td class="py-4"><span class="${getStatusClass(item.status)} px-3 py-1 rounded-full font-bold text-xs">${item.status}</span></td>
+    `;
+    tabela.appendChild(tr);
+  });
+}
+
+function ordenarStatus(campo){
+  if(!window.statusSort || window.statusSort.campo !== campo){
+    window.statusSort = {campo, dir: 1};
+  }else{
+    window.statusSort.dir = window.statusSort.dir * -1;
+  }
+
+  ["integrador","clienteFinal","numeroPedido","status"].forEach(c=>{
+    const el = document.getElementById(`sortStatus_${c}`);
+    if(el) el.innerText = "↕";
+  });
+
+  const el = document.getElementById(`sortStatus_${campo}`);
+  if(el) el.innerText = window.statusSort.dir === 1 ? "↑" : "↓";
+
+  renderStatusPedidos();
+}
+
+function limparFiltrosStatus(){
+  const busca = document.getElementById("statusBusca");
+  const status = document.getElementById("statusFiltroStatus");
+  const integrador = document.getElementById("statusFiltroIntegrador");
+  if(busca) busca.value = "";
+  if(status) status.value = "Todos";
+  if(integrador) integrador.value = "Todos";
+  renderStatusPedidos();
+}
+
+function abrirStatus(){
+  const ids = ["dashboardCRM","painelMetas","painelPerformance","painelConfig","painelRisco","painelAtividades","painelStatus"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.add("hidden");
+  });
+
+  const painel = document.getElementById("painelStatus");
+  if(painel) painel.classList.remove("hidden");
+
+  ["navCRM","navMetas","navPerf","navConfig","navRisco","navAtiv","navStatus"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("active");
+  });
+
+  const nav = document.getElementById("navStatus");
+  if(nav) nav.classList.add("active");
+
+  statusConfigPedidos = carregarConfigStatusPedidos();
+  preencherTelaConfigStatusPedidos();
+
+  if(!statusConfigFoiSalva()){
+    const primeiro = document.getElementById("statusPrimeiroAcesso");
+    const conteudo = document.getElementById("statusConteudo");
+    if(primeiro) primeiro.classList.remove("hidden");
+    if(conteudo) conteudo.classList.add("hidden");
+    return;
+  }
+
+  mostrarConteudoStatus();
+  popularFiltrosStatus(true);
+  renderStatusPedidos();
+}
 
 </script>
 
