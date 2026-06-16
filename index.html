@@ -58,6 +58,9 @@
     .version-badge:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(0,0,0,.28);}
     .version-badge strong{display:block;font-size:13px;color:#ffffff;}
     .version-badge span{color:#cbd5e1;}
+    .refresh-btn{background:white;color:#374151;border:1px solid #e5e7eb;border-radius:16px;padding:10px 14px;box-shadow:0 8px 24px rgba(15,23,42,.08);font-size:12px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;transition:.2s;min-height:48px;}
+    .refresh-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,.12);border-color:#cbd5e1;background:#f8fafc;}
+    .refresh-btn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
     .version-modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:2000;display:none;align-items:center;justify-content:center;padding:24px;}
     .version-modal.open{display:flex;}
     .version-box{background:white;border-radius:24px;max-width:560px;width:100%;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.30);}
@@ -143,10 +146,15 @@
       <h1 id="tituloCRM" contenteditable="true" onblur="salvarIdentidadeCRM()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="text-4xl font-bold text-gray-800 editable-title" title="Clique para editar o nome do CRM">JNG CRM</h1>
       <p class="text-gray-500 mt-2">Dashboard Comercial <span id="separadorVendedor" class="hidden">•</span> <input id="nomeVendedorCRM" oninput="salvarIdentidadeCRM()" class="seller-name-input" placeholder="Nome do vendedor" title="Digite o nome do vendedor"></p>
     </div>
-    <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
-      <strong>📋 Versão 1.8.12</strong>
-      <span>Build 2026.06.12</span>
-    </button>
+    <div class="flex gap-3 items-center flex-wrap justify-end">
+      <button id="btnAtualizarCRM" onclick="atualizarCRMManual()" class="refresh-btn" title="Atualizar dados do CRM">
+        <span id="iconeAtualizarCRM">↻</span><span id="textoAtualizarCRM">Atualizar</span>
+      </button>
+      <button onclick="abrirModalVersao()" class="version-badge" title="Ver novidades da versão">
+        <strong>📋 Versão 1.8.12</strong>
+        <span>Build 2026.06.12</span>
+      </button>
+    </div>
   </div>
 
   <div class="flex gap-4 mb-8 flex-wrap">
@@ -855,17 +863,18 @@
 
 <script>
 const CONFIG_PADRAO = {
-  sheetId:"1rLldLHH2vW4E6_B8NpwVNnO8wkgASnPx1QAFWy8mcPc",
-  sheetUrl:"https://docs.google.com/spreadsheets/d/1rLldLHH2vW4E6_B8NpwVNnO8wkgASnPx1QAFWy8mcPc/edit",
-  gid:"555097355",
-  colunaCliente:"A",
-  colunaData:"B",
-  colunaValor:"I"
+  sheetId:"",
+  sheetUrl:"",
+  gid:"",
+  colunaCliente:"",
+  colunaData:"",
+  colunaValor:""
 };
 
 let configCRM = carregarConfigCRM();
 
 function getUrlLiberacoes(){
+  if(!configCRM.sheetId || !configCRM.gid) return "";
   return `https://docs.google.com/spreadsheets/d/${configCRM.sheetId}/gviz/tq?tqx=out:json&gid=${configCRM.gid}`;
 }
 
@@ -998,12 +1007,12 @@ function carregarConfigCRM(){
 }
 
 function preencherTelaConfig(){
-  document.getElementById("configSheetUrl").value = configCRM.sheetUrl || configCRM.sheetId || "";
+  document.getElementById("configSheetUrl").value = configCRM.sheetUrl || "";
   document.getElementById("configSheetId").value = configCRM.sheetId || "";
   document.getElementById("configGid").value = configCRM.gid || "";
-  document.getElementById("configColCliente").value = configCRM.colunaCliente || "A";
-  document.getElementById("configColData").value = configCRM.colunaData || "B";
-  document.getElementById("configColValor").value = configCRM.colunaValor || "I";
+  document.getElementById("configColCliente").value = configCRM.colunaCliente || "";
+  document.getElementById("configColData").value = configCRM.colunaData || "";
+  document.getElementById("configColValor").value = configCRM.colunaValor || "";
 }
 
 function salvarConfigCRM(){
@@ -1016,13 +1025,23 @@ function salvarConfigCRM(){
     return;
   }
 
+  const gid = document.getElementById("configGid").value.trim();
+  const colunaCliente = document.getElementById("configColCliente").value.trim().toUpperCase();
+  const colunaData = document.getElementById("configColData").value.trim().toUpperCase();
+  const colunaValor = document.getElementById("configColValor").value.trim().toUpperCase();
+
+  if(!gid || !colunaCliente || !colunaData || !colunaValor){
+    alert("Preencha GID e as colunas Cliente, Data e Valor antes de salvar.");
+    return;
+  }
+
   configCRM = {
     sheetUrl,
     sheetId,
-    gid:document.getElementById("configGid").value.trim(),
-    colunaCliente:document.getElementById("configColCliente").value.trim().toUpperCase() || "A",
-    colunaData:document.getElementById("configColData").value.trim().toUpperCase() || "B",
-    colunaValor:document.getElementById("configColValor").value.trim().toUpperCase() || "I"
+    gid,
+    colunaCliente,
+    colunaData,
+    colunaValor
   };
 
   localStorage.setItem("jng_crm_config", JSON.stringify(configCRM));
@@ -1032,11 +1051,12 @@ function salvarConfigCRM(){
 }
 
 function restaurarConfigPadrao(){
-  if(!confirm("Deseja restaurar a configuração padrão do CRM?")) return;
+  if(!confirm("Deseja limpar a configuração da base?")) return;
   configCRM = {...CONFIG_PADRAO};
   localStorage.setItem("jng_crm_config", JSON.stringify(configCRM));
+  dadosOriginais = [];
   preencherTelaConfig();
-  carregar();
+  carregar().catch(()=>{});
 }
 
 function getCliente(row){
@@ -1282,8 +1302,44 @@ async function carregar(){
   inicializarAtividades();
 }
 
+async function atualizarCRMManual(){
+  const btn = document.getElementById("btnAtualizarCRM");
+  const texto = document.getElementById("textoAtualizarCRM");
+  const icone = document.getElementById("iconeAtualizarCRM");
+
+  try{
+    if(btn) btn.disabled = true;
+    if(texto) texto.textContent = "Atualizando";
+    if(icone) icone.textContent = "⟳";
+
+    await carregar();
+
+    if(texto) texto.textContent = "Atualizado";
+    if(icone) icone.textContent = "✓";
+
+    setTimeout(()=>{
+      if(texto) texto.textContent = "Atualizar";
+      if(icone) icone.textContent = "↻";
+    },1400);
+  }catch(e){
+    console.error(e);
+    alert("Não foi possível atualizar. Verifique a configuração da planilha.");
+    if(texto) texto.textContent = "Atualizar";
+    if(icone) icone.textContent = "↻";
+  }finally{
+    if(btn) btn.disabled = false;
+  }
+}
+
 async function carregarLiberacoes(){
-  const response = await fetch(getUrlLiberacoes() + "&t=" + Date.now());
+  const url = getUrlLiberacoes();
+
+  if(!url){
+    dadosOriginais = [];
+    return;
+  }
+
+  const response = await fetch(url + "&t=" + Date.now());
   const text = await response.text();
   const json = JSON.parse(text.substring(47).slice(0,-2));
 
@@ -2880,9 +2936,9 @@ document.getElementById("pesquisa").addEventListener("input",function(){
 inicializarSidebar();
 inicializarIdentidadeCRM();
 preencherTelaConfig();
-carregar();
+carregar().catch(()=>{});
 
-// Atualização automática removida: os dados atualizam ao abrir/recarregar a página ou trocar filtros.
+// Atualização manual: use o botão Atualizar no topo do CRM para recarregar os dados da planilha.
 
 /* ===== PATCH v1.8.12 - Risco sem WhatsApp + Atividades com ocultar ===== */
 
