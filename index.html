@@ -68,27 +68,35 @@
       position:fixed;
       right:28px;
       top:112px;
+      bottom:auto;
       z-index:5000;
       color:#0f172a;
-      background:rgba(255,255,255,.94);
-      border:1px solid rgba(148,163,184,.32);
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(148,163,184,.35);
       border-radius:999px;
-      padding:8px 14px 8px 8px;
-      box-shadow:0 14px 34px rgba(15,23,42,.14);
+      padding:7px;
+      box-shadow:0 14px 36px rgba(15,23,42,.14);
       backdrop-filter:blur(16px);
       -webkit-backdrop-filter:blur(16px);
       display:flex;
       align-items:center;
-      gap:10px;
-      min-height:50px;
+      gap:8px;
+      flex-wrap:nowrap;
+      width:48px;
+      max-width:48px;
+      min-height:48px;
       overflow:hidden;
-      opacity:.92;
-      transition:opacity .2s ease,box-shadow .2s ease,transform .2s ease;
+      opacity:.74;
+      cursor:pointer;
+      transition:width .28s ease,max-width .28s ease,opacity .2s ease,box-shadow .2s ease,transform .2s ease,border-radius .2s ease;
     }
     .auto-refresh-box:hover,
     .auto-refresh-box:focus-within{
+      width:430px;
+      max-width:calc(100vw - 56px);
       opacity:1;
-      box-shadow:0 20px 48px rgba(15,23,42,.20);
+      border-radius:24px;
+      box-shadow:0 20px 48px rgba(15,23,42,.22);
       transform:translateY(-1px);
     }
     .auto-refresh-icon{
@@ -112,22 +120,113 @@
       background:#22c55e;
       box-shadow:0 0 0 5px rgba(34,197,94,.13);
       flex:none;
+      margin-left:2px;
     }
-    .auto-refresh-dot.paused{background:#94a3b8;box-shadow:0 0 0 5px rgba(148,163,184,.14);}
-    .auto-refresh-dot.loading{background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.16);animation:pulseRefresh 1s infinite;}
-    @keyframes pulseRefresh{0%,100%{transform:scale(1);}50%{transform:scale(1.22);}}
+    .auto-refresh-dot.paused{
+      background:#94a3b8;
+      box-shadow:0 0 0 5px rgba(148,163,184,.14);
+    }
+    .auto-refresh-dot.loading{
+      background:#f59e0b;
+      box-shadow:0 0 0 5px rgba(245,158,11,.16);
+      animation:pulseRefresh 1s infinite;
+    }
+    @keyframes pulseRefresh{
+      0%,100%{transform:scale(1);}
+      50%{transform:scale(1.22);}
+    }
     .auto-refresh-text{
       font-size:12px;
       color:#334155;
       font-weight:900;
       line-height:1.25;
+      min-width:190px;
+      flex:1;
       white-space:nowrap;
+      opacity:0;
+      transform:translateX(-8px);
+      transition:opacity .18s ease,transform .18s ease;
     }
+    .auto-refresh-box:hover .auto-refresh-text,
+    .auto-refresh-box:focus-within .auto-refresh-text,
+    .auto-refresh-box:hover select,
+    .auto-refresh-box:focus-within select,
+    .auto-refresh-box:hover button,
+    .auto-refresh-box:focus-within button{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateX(0);
+    }
+    .auto-refresh-box select{
+      font-size:12px;
+      border:1px solid #dbe3ef;
+      border-radius:14px;
+      padding:8px 10px;
+      background:#f8fafc;
+      color:#0f172a;
+      font-weight:800;
+      opacity:0;
+      pointer-events:none;
+      transform:translateX(-8px);
+      transition:opacity .18s ease,transform .18s ease,border-color .18s ease,background .18s ease;
+    }
+    .auto-refresh-box select:hover{border-color:#93c5fd;background:#ffffff;}
+    .auto-refresh-box button{
+      font-size:12px;
+      border-radius:14px;
+      padding:9px 12px;
+      font-weight:900;
+      background:#0f172a;
+      color:white;
+      white-space:nowrap;
+      opacity:0;
+      pointer-events:none;
+      transform:translateX(-8px);
+      transition:opacity .18s ease,transform .18s ease,background .18s ease;
+    }
+    .auto-refresh-box button:hover{background:#2563eb;}
     @media(max-width:760px){
-      .auto-refresh-box{top:84px;right:12px;max-width:calc(100vw - 24px);}
-      .auto-refresh-text{font-size:11px;}
+      .auto-refresh-box{
+        top:86px;
+        right:12px;
+        width:48px;
+        max-width:48px;
+      }
+      .auto-refresh-box:hover,
+      .auto-refresh-box:focus-within{
+        left:12px;
+        width:auto;
+        max-width:none;
+        border-radius:22px;
+        flex-wrap:wrap;
+      }
+      .auto-refresh-text{min-width:180px;}
     }
 
+
+    .auto-refresh-fixed{
+      width:auto!important;
+      max-width:320px!important;
+      min-width:245px!important;
+      padding:8px 12px 8px 8px!important;
+      border-radius:999px!important;
+      opacity:.92!important;
+      cursor:default!important;
+      gap:10px!important;
+    }
+    .auto-refresh-fixed:hover,
+    .auto-refresh-fixed:focus-within{
+      width:auto!important;
+      max-width:320px!important;
+      transform:none!important;
+      border-radius:999px!important;
+    }
+    .auto-refresh-fixed .auto-refresh-text{
+      opacity:1!important;
+      transform:none!important;
+      min-width:auto!important;
+      font-size:12px!important;
+    }
 
     @media print{.sidebar,.filter-panel button,#btnExportarPdfPerf{display:none!important}.content{margin-left:0}.card{box-shadow:none;border:1px solid #e5e7eb}}
   </style>
@@ -202,16 +301,14 @@
 
 
 <div class="content p-8">
-
-
-
-<div id="dashboardCRM">
-  <div id="autoRefreshBox" class="auto-refresh-box" title="Atualização automática da aba CRM a cada 15 segundos">
+  <div id="autoRefreshBox" class="auto-refresh-box auto-refresh-fixed" title="Atualização automática a cada 15 segundos">
     <span class="auto-refresh-icon">↻</span>
     <span id="autoRefreshDot" class="auto-refresh-dot"></span>
     <span id="autoRefreshStatus" class="auto-refresh-text">Atualização automática • 15s</span>
   </div>
 
+
+<div id="dashboardCRM">
   <div class="flex justify-between items-center mb-10">
     <div>
       <h1 id="tituloCRM" contenteditable="true" onblur="salvarIdentidadeCRM()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" class="text-4xl font-bold text-gray-800 editable-title" title="Clique para editar o nome do CRM">JNG CRM</h1>
@@ -302,7 +399,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       <div class="bg-gray-50 rounded-2xl p-5">
         <p class="text-gray-500 mb-2">Total Comprado</p>
         <h2 id="histTotalComprado" class="text-2xl font-bold text-green-600">R$ 0</h2>
@@ -579,20 +676,20 @@
   <div class="flex justify-between items-center mb-10 flex-wrap gap-4">
     <div>
       <h1 class="text-4xl font-bold text-gray-800">Status dos Pedidos</h1>
-      <p class="text-gray-500 mt-2">Consulta rápida usando a mesma planilha configurada na aba CONFIG.</p>
+      <p class="text-gray-500 mt-2">Acompanhe status comercial, retorno da logística e pedidos aguardando pagamento.</p>
     </div>
   </div>
 
   <div id="statusPrimeiroAcesso" class="card mb-8 border-l-4 border-blue-600">
     <div class="flex justify-between items-start gap-4 flex-wrap mb-6">
       <div>
-        <h2 class="text-2xl font-bold text-gray-800">Configuração da aba Status</h2>
-        <p class="text-gray-500 mt-1">Configure quais colunas da sua planilha representam cada informação do pedido.</p>
+        <h2 class="text-2xl font-bold text-gray-800">Primeiro acesso da aba Status</h2>
+        <p class="text-gray-500 mt-1">Configure as colunas da sua planilha para consulta dos pedidos.</p>
       </div>
-      <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-bold text-sm">Individual por vendedor</span>
+      <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-bold text-sm">Configuração individual</span>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-5 mb-6">
       <div class="filter-field">
         <label>Coluna Integrador</label>
         <input id="statusConfigColIntegrador" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="A">
@@ -606,19 +703,19 @@
         <input id="statusConfigColNumeroPedido" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="D">
       </div>
       <div class="filter-field">
-        <label>Coluna Status Manual (J)</label>
-        <input id="statusConfigColStatus" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="J">
+        <label>Status Manual</label>
+        <input id="statusConfigColStatusManual" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="J">
       </div>
       <div class="filter-field">
-        <label>Coluna Status Logística (K)</label>
-        <input id="statusConfigColLogistica" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="K">
+        <label>Status Logística</label>
+        <input id="statusConfigColStatusLogistica" class="border border-gray-300 rounded-xl px-4 py-3 bg-white uppercase" placeholder="K">
       </div>
     </div>
 
     <div class="bg-gray-50 rounded-2xl p-5 mb-6">
       <p class="text-gray-600 text-sm">
-        Padrão sugerido: <b>A</b> Integrador • <b>C</b> Cliente Final • <b>D</b> Número do Pedido • <b>J</b> Status Manual • <b>K</b> Status Logística.
-        Se o Status estiver vazio, o CRM exibirá <b>Sem status informado</b>.
+        Padrão sugerido: <b>A</b> Integrador • <b>C</b> Cliente Final • <b>D</b> Pedido • <b>J</b> Status Manual • <b>K</b> Status Logística.
+        A coluna J pode conter: aguardando pagamento, financeiro, link, nota ou liberado.
       </p>
     </div>
 
@@ -644,17 +741,23 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <div>
           <label class="block text-xs font-bold text-gray-500 mb-1">Buscar</label>
           <input id="statusBusca" oninput="renderStatusPedidos()" type="text" placeholder="Integrador, cliente ou pedido" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-gray-500 mb-1">Status</label>
-          <select id="statusFiltroStatus" onchange="renderStatusPedidos()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+          <label class="block text-xs font-bold text-gray-500 mb-1">Status Manual</label>
+          <select id="statusFiltroManual" onchange="renderStatusPedidos()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
             <option value="Todos">Todos</option>
-            <option value="Aguardando pagamento">Aguardando pagamento</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">Status Logística</label>
+          <select id="statusFiltroLogistica" onchange="renderStatusPedidos()" class="border border-gray-300 rounded-xl px-4 py-3 bg-white w-full">
+            <option value="Todos">Todos</option>
           </select>
         </div>
 
@@ -665,9 +768,14 @@
           </select>
         </div>
 
-        <button type="button" onclick="limparFiltrosStatus()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-semibold">
-          Limpar filtros
-        </button>
+        <div class="flex gap-2 flex-wrap">
+          <button type="button" onclick="filtrarAguardandoPagamento()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-xl font-semibold flex-1">
+            Aguard. Pagamento
+          </button>
+          <button type="button" onclick="limparFiltrosStatus()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-semibold flex-1">
+            Limpar
+          </button>
+        </div>
       </div>
     </div>
 
@@ -676,28 +784,24 @@
         <p class="text-gray-500 mb-2">Total de Pedidos</p>
         <h2 id="statusTotalPedidos" class="text-3xl font-bold text-blue-600">0</h2>
       </div>
-      <div class="card">
-        <p class="text-gray-500 mb-2">Status Diferentes</p>
-        <h2 id="statusQtdStatus" class="text-3xl font-bold text-purple-600">0</h2>
+      <div class="card border-l-4 border-orange-500">
+        <p class="text-gray-500 mb-2">Aguardando Pagamento</p>
+        <h2 id="statusAguardandoPagamento" class="text-3xl font-bold text-orange-500">0</h2>
       </div>
       <div class="card">
-        <p class="text-gray-500 mb-2">Sem Status</p>
-        <h2 id="statusSemStatus" class="text-3xl font-bold text-orange-500">0</h2>
+        <p class="text-gray-500 mb-2">Liberados</p>
+        <h2 id="statusLiberados" class="text-3xl font-bold text-green-600">0</h2>
       </div>
       <div class="card">
-        <p class="text-gray-500 mb-2">Aguard. Pagamento</p>
-        <h2 id="statusAguardandoPagamento" class="text-3xl font-bold text-red-500">0</h2>
-      </div>
-      <div class="card">
-        <p class="text-gray-500 mb-2">Integradores</p>
-        <h2 id="statusQtdIntegradores" class="text-3xl font-bold text-green-600">0</h2>
+        <p class="text-gray-500 mb-2">Sem Retorno Logística</p>
+        <h2 id="statusSemLogistica" class="text-3xl font-bold text-purple-600">0</h2>
       </div>
     </div>
 
     <div class="card">
       <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
         <h2 class="text-2xl font-bold text-gray-700">Lista de Pedidos</h2>
-        <p class="text-sm text-gray-500">Os dados vêm da planilha configurada na aba CONFIG.</p>
+        <p class="text-sm text-gray-500">Atualização automática a cada 15 segundos.</p>
       </div>
 
       <div class="overflow-x-auto">
@@ -706,9 +810,9 @@
             <tr class="border-b text-left text-gray-500">
               <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('integrador')">Integrador <span id="sortStatus_integrador">↕</span></th>
               <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('clienteFinal')">Cliente Final <span id="sortStatus_clienteFinal">↕</span></th>
-              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('numeroPedido')">Número do Pedido <span id="sortStatus_numeroPedido">↕</span></th>
+              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('numeroPedido')">Pedido <span id="sortStatus_numeroPedido">↕</span></th>
               <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('statusManual')">Status Manual <span id="sortStatus_statusManual">↕</span></th>
-              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('statusLogistica')">Retorno Logística <span id="sortStatus_statusLogistica">↕</span></th>
+              <th class="pb-4 cursor-pointer select-none hover:text-blue-600" onclick="ordenarStatus('statusLogistica')">Status Logística <span id="sortStatus_statusLogistica">↕</span></th>
             </tr>
           </thead>
           <tbody id="statusPedidosTabela"></tbody>
@@ -717,7 +821,6 @@
     </div>
   </div>
 </div>
-
 
 <div id="modalPerdidos" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
   <div class="bg-white rounded-2xl p-8 w-[1000px] max-h-[80vh] overflow-auto">
@@ -3901,8 +4004,6 @@ function abrirStatus(){
       const el = document.getElementById(id);
       if(el) el.classList.toggle("active", id === navId);
     });
-    const atualizador = document.getElementById("autoRefreshBox");
-    if(atualizador) atualizador.style.display = painelId === "dashboardCRM" ? "flex" : "none";
   };
 
   const carregarLiberacoesOriginal = window.carregarLiberacoes;
@@ -4258,15 +4359,25 @@ async function atualizarDadosAutomatico(manual=false){
   }
 }
 
-function alterarIntervaloAutoRefresh(){
+function alterarIntervaloAutoRefresh(valor){
+  const intervalo = Number(valor || 0);
+  localStorage.setItem("jng_crm_auto_refresh_interval", String(intervalo));
   iniciarAutoRefreshCRM();
 }
 
 function iniciarAutoRefreshCRM(){
-  const intervalo = 15000;
-  localStorage.setItem("jng_crm_auto_refresh_interval", "15000");
+  const select = document.getElementById("autoRefreshInterval");
+  const intervalo = Number(localStorage.getItem("jng_crm_auto_refresh_interval") || "15000");
+
+  if(select) select.value = String(intervalo);
   if(autoRefreshTimerCRM) clearInterval(autoRefreshTimerCRM);
-  setStatusAutoRefreshCRM("Atualização automática • 15s", "ok");
+
+  if(intervalo <= 0){
+    setStatusAutoRefreshCRM("Atualização automática desligada", "paused");
+    return;
+  }
+
+  setStatusAutoRefreshCRM(`Atualização automática ativa • ${Math.round(intervalo/1000)}s`, "ok");
   autoRefreshTimerCRM = setInterval(() => atualizarDadosAutomatico(false), intervalo);
 }
 
@@ -4274,137 +4385,251 @@ document.addEventListener("DOMContentLoaded", iniciarAutoRefreshCRM);
 setTimeout(iniciarAutoRefreshCRM, 500);
 
 
-
-/* ===== PATCH FINAL - Atualizador apenas no CRM e Status J/K ===== */
+/* ===== PATCH v1.9.5 - Auto refresh fixo 15s + Status Manual/Logística ===== */
 (function(){
-  window.STATUS_CONFIG_PADRAO = {colunaIntegrador:"A", colunaClienteFinal:"C", colunaNumeroPedido:"D", colunaStatus:"J", colunaLogistica:"K"};
+  const STATUS_CONFIG_PADRAO_NOVO = {
+    colunaIntegrador:"A",
+    colunaClienteFinal:"C",
+    colunaNumeroPedido:"D",
+    colunaStatusManual:"J",
+    colunaStatusLogistica:"K"
+  };
 
   window.carregarConfigStatusPedidos = function(){
     try{
-      const salvo = JSON.parse(localStorage.getItem("jng_crm_status_config") || "{}");
-      return {...window.STATUS_CONFIG_PADRAO, ...salvo};
+      const salvo = JSON.parse(localStorage.getItem("jng_crm_status_config") || "null");
+      return {...STATUS_CONFIG_PADRAO_NOVO, ...(salvo || {})};
     }catch(e){
-      return {...window.STATUS_CONFIG_PADRAO};
+      return {...STATUS_CONFIG_PADRAO_NOVO};
     }
   };
 
-  if(typeof statusConfigPedidos !== "undefined"){
-    statusConfigPedidos = window.carregarConfigStatusPedidos();
-  }
+  window.statusConfigPedidos = window.carregarConfigStatusPedidos();
+
+  window.statusConfigFoiSalva = function(){
+    return !!localStorage.getItem("jng_crm_status_config");
+  };
+
+  window.normalizarStatusConfig = function(){
+    window.statusConfigPedidos = {
+      colunaIntegrador:(window.statusConfigPedidos?.colunaIntegrador || "A").trim().toUpperCase(),
+      colunaClienteFinal:(window.statusConfigPedidos?.colunaClienteFinal || "C").trim().toUpperCase(),
+      colunaNumeroPedido:(window.statusConfigPedidos?.colunaNumeroPedido || "D").trim().toUpperCase(),
+      colunaStatusManual:(window.statusConfigPedidos?.colunaStatusManual || window.statusConfigPedidos?.colunaStatus || "J").trim().toUpperCase(),
+      colunaStatusLogistica:(window.statusConfigPedidos?.colunaStatusLogistica || "K").trim().toUpperCase()
+    };
+  };
 
   window.preencherTelaConfigStatusPedidos = function(){
-    const cfg = statusConfigPedidos || window.STATUS_CONFIG_PADRAO;
-    const campos = {
-      statusConfigColIntegrador: cfg.colunaIntegrador || "A",
-      statusConfigColClienteFinal: cfg.colunaClienteFinal || "C",
-      statusConfigColNumeroPedido: cfg.colunaNumeroPedido || "D",
-      statusConfigColStatus: cfg.colunaStatus || "J",
-      statusConfigColLogistica: cfg.colunaLogistica || "K"
-    };
-    Object.entries(campos).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value=val; });
+    window.statusConfigPedidos = window.carregarConfigStatusPedidos();
+    window.normalizarStatusConfig();
+    const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.value=v; };
+    set("statusConfigColIntegrador", window.statusConfigPedidos.colunaIntegrador);
+    set("statusConfigColClienteFinal", window.statusConfigPedidos.colunaClienteFinal);
+    set("statusConfigColNumeroPedido", window.statusConfigPedidos.colunaNumeroPedido);
+    set("statusConfigColStatusManual", window.statusConfigPedidos.colunaStatusManual);
+    set("statusConfigColStatusLogistica", window.statusConfigPedidos.colunaStatusLogistica);
+    if(typeof window.atualizarMapeamentoStatus === "function") window.atualizarMapeamentoStatus();
   };
 
   window.atualizarMapeamentoStatus = function(){
     const el = document.getElementById("statusMapeamentoAtual");
-    const cfg = statusConfigPedidos || window.STATUS_CONFIG_PADRAO;
-    if(el) el.innerText = `Mapeamento atual: ${cfg.colunaIntegrador || "A"} Integrador • ${cfg.colunaClienteFinal || "C"} Cliente Final • ${cfg.colunaNumeroPedido || "D"} Pedido • ${cfg.colunaStatus || "J"} Status Manual • ${cfg.colunaLogistica || "K"} Logística`;
-  };
-
-  window.salvarConfigStatusPedidos = function(){
-    statusConfigPedidos = {
-      colunaIntegrador:(document.getElementById("statusConfigColIntegrador")?.value || "A").trim().toUpperCase() || "A",
-      colunaClienteFinal:(document.getElementById("statusConfigColClienteFinal")?.value || "C").trim().toUpperCase() || "C",
-      colunaNumeroPedido:(document.getElementById("statusConfigColNumeroPedido")?.value || "D").trim().toUpperCase() || "D",
-      colunaStatus:(document.getElementById("statusConfigColStatus")?.value || "J").trim().toUpperCase() || "J",
-      colunaLogistica:(document.getElementById("statusConfigColLogistica")?.value || "K").trim().toUpperCase() || "K"
-    };
-    localStorage.setItem("jng_crm_status_config", JSON.stringify(statusConfigPedidos));
-    statusFiltrosPopulados = false;
-    preencherTelaConfigStatusPedidos();
-    mostrarConteudoStatus();
-    popularFiltrosStatus(true);
-    renderStatusPedidos();
-  };
-
-  window.preencherPadraoStatusPedidos = function(){
-    statusConfigPedidos = {...window.STATUS_CONFIG_PADRAO};
-    preencherTelaConfigStatusPedidos();
+    if(!el) return;
+    window.normalizarStatusConfig();
+    el.innerText = `Mapeamento atual: ${window.statusConfigPedidos.colunaIntegrador} Integrador • ${window.statusConfigPedidos.colunaClienteFinal} Cliente Final • ${window.statusConfigPedidos.colunaNumeroPedido} Pedido • ${window.statusConfigPedidos.colunaStatusManual} Status Manual • ${window.statusConfigPedidos.colunaStatusLogistica} Status Logística`;
   };
 
   window.getStatusPedidoRow = function(row){
-    const cfg = statusConfigPedidos || window.STATUS_CONFIG_PADRAO;
-    const integrador = getCelula(row, colunaParaIndice(cfg.colunaIntegrador || "A"));
-    const clienteFinal = getCelula(row, colunaParaIndice(cfg.colunaClienteFinal || "C"));
-    const numeroPedido = getCelula(row, colunaParaIndice(cfg.colunaNumeroPedido || "D"));
-    const manualBruto = getCelula(row, colunaParaIndice(cfg.colunaStatus || "J"));
-    const logisticaBruto = getCelula(row, colunaParaIndice(cfg.colunaLogistica || "K"));
-    const statusManual = String(manualBruto || "").trim() || "Sem status manual";
-    const statusLogistica = String(logisticaBruto || "").trim() || "Sem retorno logística";
-    return {integrador:String(integrador||"").trim(), clienteFinal:String(clienteFinal||"").trim(), numeroPedido:String(numeroPedido||"").trim(), status:statusManual, statusManual, statusLogistica};
+    window.normalizarStatusConfig();
+    const cfg = window.statusConfigPedidos;
+    const statusManualBruto = String(getCelula(row, colunaParaIndice(cfg.colunaStatusManual)) || "").trim();
+    const statusLogisticaBruto = String(getCelula(row, colunaParaIndice(cfg.colunaStatusLogistica)) || "").trim();
+    return {
+      integrador:String(getCelula(row, colunaParaIndice(cfg.colunaIntegrador)) || "").trim(),
+      clienteFinal:String(getCelula(row, colunaParaIndice(cfg.colunaClienteFinal)) || "").trim(),
+      numeroPedido:String(getCelula(row, colunaParaIndice(cfg.colunaNumeroPedido)) || "").trim(),
+      statusManual: statusManualBruto || "Sem status manual",
+      statusLogistica: statusLogisticaBruto || "Sem retorno logística"
+    };
+  };
+
+  window.obterListaStatusPedidos = function(){
+    return (dadosOriginais || []).map(window.getStatusPedidoRow).filter(item => item.integrador || item.clienteFinal || item.numeroPedido);
   };
 
   window.popularFiltrosStatus = function(forcar=false){
-    const selectStatus = document.getElementById("statusFiltroStatus");
+    const selectManual = document.getElementById("statusFiltroManual");
+    const selectLogistica = document.getElementById("statusFiltroLogistica");
     const selectIntegrador = document.getElementById("statusFiltroIntegrador");
-    if(!selectStatus || !selectIntegrador) return;
-    if(statusFiltrosPopulados && !forcar) return;
-    const statusAtual = selectStatus.value || "Todos";
+    if(!selectManual || !selectLogistica || !selectIntegrador) return;
+    if(window.statusFiltrosPopulados && !forcar) return;
+
+    const manualAtual = selectManual.value || "Todos";
+    const logisticaAtual = selectLogistica.value || "Todos";
     const integradorAtual = selectIntegrador.value || "Todos";
-    const lista = obterListaStatusPedidos();
-    const statusSet = new Set(lista.map(i=>i.statusManual).filter(Boolean));
-    const integradorSet = new Set(lista.map(i=>i.integrador).filter(Boolean));
-    selectStatus.innerHTML = `<option value="Todos">Todos</option><option value="Aguardando pagamento">Aguardando pagamento</option>`;
-    [...statusSet].sort((a,b)=>a.localeCompare(b,"pt-BR")).forEach(st=>{
-      if(st === "Aguardando pagamento") return;
-      const opt=document.createElement("option"); opt.value=st; opt.textContent=st; selectStatus.appendChild(opt);
-    });
-    selectIntegrador.innerHTML = `<option value="Todos">Todos</option>`;
-    [...integradorSet].sort((a,b)=>a.localeCompare(b,"pt-BR")).forEach(nome=>{ const opt=document.createElement("option"); opt.value=nome; opt.textContent=nome; selectIntegrador.appendChild(opt); });
-    if([...selectStatus.options].some(o=>o.value===statusAtual)) selectStatus.value=statusAtual;
+    const lista = window.obterListaStatusPedidos();
+
+    const montar = (arr) => [`<option value="Todos">Todos</option>`].concat([...new Set(arr.filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR")).map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`)).join("");
+    selectManual.innerHTML = montar(lista.map(i=>i.statusManual));
+    selectLogistica.innerHTML = montar(lista.map(i=>i.statusLogistica));
+    selectIntegrador.innerHTML = montar(lista.map(i=>i.integrador));
+
+    if([...selectManual.options].some(o=>o.value===manualAtual)) selectManual.value=manualAtual;
+    if([...selectLogistica.options].some(o=>o.value===logisticaAtual)) selectLogistica.value=logisticaAtual;
     if([...selectIntegrador.options].some(o=>o.value===integradorAtual)) selectIntegrador.value=integradorAtual;
-    statusFiltrosPopulados = true;
+    window.statusFiltrosPopulados = true;
+  };
+
+  window.getStatusClass = function(status){
+    const s = normalizar(status);
+    if(s.includes("aguardando pagamento")) return "bg-orange-100 text-orange-700";
+    if(s.includes("liber")) return "bg-green-100 text-green-700";
+    if(s.includes("financeiro")) return "bg-yellow-100 text-yellow-700";
+    if(s.includes("nota")) return "bg-blue-100 text-blue-700";
+    if(s.includes("link")) return "bg-purple-100 text-purple-700";
+    if(s.includes("sem")) return "bg-gray-100 text-gray-600";
+    return "bg-slate-100 text-slate-700";
   };
 
   window.renderStatusPedidos = function(){
     const tabela = document.getElementById("statusPedidosTabela");
     if(!tabela) return;
-    popularFiltrosStatus();
     const busca = normalizar(document.getElementById("statusBusca")?.value || "");
-    const statusFiltro = document.getElementById("statusFiltroStatus")?.value || "Todos";
-    const integradorFiltro = document.getElementById("statusFiltroIntegrador")?.value || "Todos";
-    let lista = obterListaStatusPedidos().filter(item=>{
-      const textoBusca = normalizar(`${item.integrador} ${item.clienteFinal} ${item.numeroPedido} ${item.statusManual} ${item.statusLogistica}`);
-      if(busca && !textoBusca.includes(busca)) return false;
-      if(statusFiltro !== "Todos" && normalizar(item.statusManual) !== normalizar(statusFiltro)) return false;
-      if(integradorFiltro !== "Todos" && item.integrador !== integradorFiltro) return false;
+    const filtroManual = document.getElementById("statusFiltroManual")?.value || "Todos";
+    const filtroLogistica = document.getElementById("statusFiltroLogistica")?.value || "Todos";
+    const filtroIntegrador = document.getElementById("statusFiltroIntegrador")?.value || "Todos";
+    const todos = window.obterListaStatusPedidos();
+
+    let lista = todos.filter(item=>{
+      const texto = normalizar(`${item.integrador} ${item.clienteFinal} ${item.numeroPedido} ${item.statusManual} ${item.statusLogistica}`);
+      if(busca && !texto.includes(busca)) return false;
+      if(filtroManual !== "Todos" && item.statusManual !== filtroManual) return false;
+      if(filtroLogistica !== "Todos" && item.statusLogistica !== filtroLogistica) return false;
+      if(filtroIntegrador !== "Todos" && item.integrador !== filtroIntegrador) return false;
       return true;
     });
+
     if(window.statusSort && window.statusSort.campo){
       const {campo, dir} = window.statusSort;
       lista.sort((a,b)=> dir * String(a[campo] || "").localeCompare(String(b[campo] || ""), "pt-BR", {numeric:true}));
     }
-    const todos = obterListaStatusPedidos();
-    const statusDiferentes = new Set(todos.map(i=>i.statusManual).filter(Boolean));
-    const integradores = new Set(todos.map(i=>i.integrador).filter(Boolean));
-    const semStatus = todos.filter(i=>i.statusManual === "Sem status manual").length;
+
     const aguardando = todos.filter(i=>normalizar(i.statusManual).includes("aguardando pagamento")).length;
-    if(document.getElementById("statusTotalPedidos")) document.getElementById("statusTotalPedidos").innerText = lista.length;
-    if(document.getElementById("statusQtdStatus")) document.getElementById("statusQtdStatus").innerText = statusDiferentes.size;
-    if(document.getElementById("statusSemStatus")) document.getElementById("statusSemStatus").innerText = semStatus;
-    if(document.getElementById("statusQtdIntegradores")) document.getElementById("statusQtdIntegradores").innerText = integradores.size;
-    const tituloAguardando = document.getElementById("statusAguardandoPagamento");
-    if(tituloAguardando) tituloAguardando.innerText = aguardando;
-    tabela.innerHTML = "";
-    if(lista.length === 0){ tabela.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-400">Nenhum pedido encontrado.</td></tr>`; return; }
-    lista.forEach(item=>{
-      tabela.innerHTML += `<tr class="border-b table-hover"><td class="py-4 font-semibold">${escapeHTML(item.integrador || "-")}</td><td class="py-4">${escapeHTML(item.clienteFinal || "-")}</td><td class="py-4 font-bold text-blue-600">${escapeHTML(item.numeroPedido || "-")}</td><td class="py-4"><span class="${getStatusClass(item.statusManual)} px-3 py-1 rounded-full font-bold text-xs">${escapeHTML(item.statusManual)}</span></td><td class="py-4"><span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full font-bold text-xs">${escapeHTML(item.statusLogistica)}</span></td></tr>`;
-    });
+    const liberados = todos.filter(i=>normalizar(i.statusManual).includes("liber")).length;
+    const semLogistica = todos.filter(i=>i.statusLogistica === "Sem retorno logística").length;
+    const setText = (id,v)=>{ const el=document.getElementById(id); if(el) el.innerText=v; };
+    setText("statusTotalPedidos", lista.length);
+    setText("statusAguardandoPagamento", aguardando);
+    setText("statusLiberados", liberados);
+    setText("statusSemLogistica", semLogistica);
+
+    if(lista.length === 0){
+      tabela.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-gray-400">Nenhum pedido encontrado.</td></tr>`;
+      return;
+    }
+
+    tabela.innerHTML = lista.map(item=>`
+      <tr class="border-b table-hover">
+        <td class="py-4 font-semibold">${escapeHTML(item.integrador || "-")}</td>
+        <td class="py-4">${escapeHTML(item.clienteFinal || "-")}</td>
+        <td class="py-4 font-bold text-blue-600">${escapeHTML(item.numeroPedido || "-")}</td>
+        <td class="py-4"><span class="${window.getStatusClass(item.statusManual)} px-3 py-1 rounded-full font-bold text-xs">${escapeHTML(item.statusManual)}</span></td>
+        <td class="py-4"><span class="${window.getStatusClass(item.statusLogistica)} px-3 py-1 rounded-full font-bold text-xs">${escapeHTML(item.statusLogistica)}</span></td>
+      </tr>
+    `).join("");
   };
 
-  const painel = document.getElementById("dashboardCRM");
-  const box = document.getElementById("autoRefreshBox");
-  if(painel && box && box.parentElement !== painel) painel.insertBefore(box, painel.firstElementChild);
+  window.salvarConfigStatusPedidos = function(){
+    window.statusConfigPedidos = {
+      colunaIntegrador:(document.getElementById("statusConfigColIntegrador")?.value || "A").trim().toUpperCase() || "A",
+      colunaClienteFinal:(document.getElementById("statusConfigColClienteFinal")?.value || "C").trim().toUpperCase() || "C",
+      colunaNumeroPedido:(document.getElementById("statusConfigColNumeroPedido")?.value || "D").trim().toUpperCase() || "D",
+      colunaStatusManual:(document.getElementById("statusConfigColStatusManual")?.value || "J").trim().toUpperCase() || "J",
+      colunaStatusLogistica:(document.getElementById("statusConfigColStatusLogistica")?.value || "K").trim().toUpperCase() || "K"
+    };
+    localStorage.setItem("jng_crm_status_config", JSON.stringify(window.statusConfigPedidos));
+    window.statusFiltrosPopulados = false;
+    window.preencherTelaConfigStatusPedidos();
+    window.mostrarConteudoStatus();
+    window.popularFiltrosStatus(true);
+    window.renderStatusPedidos();
+  };
+
+  window.preencherPadraoStatusPedidos = function(){
+    window.statusConfigPedidos = {...STATUS_CONFIG_PADRAO_NOVO};
+    const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.value=v; };
+    set("statusConfigColIntegrador", "A");
+    set("statusConfigColClienteFinal", "C");
+    set("statusConfigColNumeroPedido", "D");
+    set("statusConfigColStatusManual", "J");
+    set("statusConfigColStatusLogistica", "K");
+  };
+
+  window.filtrarAguardandoPagamento = function(){
+    const filtro = document.getElementById("statusFiltroManual");
+    if(filtro){
+      const op = [...filtro.options].find(o=>normalizar(o.value).includes("aguardando pagamento"));
+      if(op) filtro.value = op.value;
+    }
+    window.renderStatusPedidos();
+  };
+
+  window.limparFiltrosStatus = function(){
+    const ids = ["statusBusca","statusFiltroManual","statusFiltroLogistica","statusFiltroIntegrador"];
+    ids.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      if(el.tagName === "SELECT") el.value = "Todos";
+      else el.value = "";
+    });
+    window.renderStatusPedidos();
+  };
+
+  window.editarConfigStatusPedidos = function(){
+    window.preencherTelaConfigStatusPedidos();
+    document.getElementById("statusPrimeiroAcesso")?.classList.remove("hidden");
+    document.getElementById("statusConteudo")?.classList.add("hidden");
+  };
+
+  window.mostrarConteudoStatus = function(){
+    document.getElementById("statusPrimeiroAcesso")?.classList.add("hidden");
+    document.getElementById("statusConteudo")?.classList.remove("hidden");
+    window.atualizarMapeamentoStatus();
+  };
+
+  window.abrirStatus = function(){
+    if(typeof mostrarPainelCRM === "function") mostrarPainelCRM("painelStatus","navStatus");
+    window.statusConfigPedidos = window.carregarConfigStatusPedidos();
+    window.normalizarStatusConfig();
+    window.preencherTelaConfigStatusPedidos();
+    if(!window.statusConfigFoiSalva()){
+      document.getElementById("statusPrimeiroAcesso")?.classList.remove("hidden");
+      document.getElementById("statusConteudo")?.classList.add("hidden");
+      return;
+    }
+    window.mostrarConteudoStatus();
+    window.statusFiltrosPopulados = false;
+    window.popularFiltrosStatus(true);
+    window.renderStatusPedidos();
+  };
+
+  window.iniciarAutoRefreshCRM = function(){
+    if(typeof autoRefreshTimerCRM !== "undefined" && autoRefreshTimerCRM) clearInterval(autoRefreshTimerCRM);
+    localStorage.setItem("jng_crm_auto_refresh_interval", "15000");
+    setStatusAutoRefreshCRM("Atualização automática • 15s", "ok");
+    autoRefreshTimerCRM = setInterval(() => atualizarDadosAutomatico(false), 15000);
+  };
+
+  window.alterarIntervaloAutoRefresh = function(){
+    window.iniciarAutoRefreshCRM();
+  };
+
+  document.addEventListener("DOMContentLoaded", function(){
+    window.iniciarAutoRefreshCRM();
+  });
+  setTimeout(function(){ window.iniciarAutoRefreshCRM(); }, 700);
 })();
+
 
 </script>
 
